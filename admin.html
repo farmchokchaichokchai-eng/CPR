@@ -62,6 +62,8 @@ input[type=text]{font:inherit;padding:7px 10px;border:1px solid var(--line);bord
 <div style="margin-top:10px"><b>ตัวเลือกการสุ่ม</b>
 <label class="fl" style="color:var(--ink)"><input type="checkbox" id="c1"> สุ่มลำดับข้อ (ผู้สอบแต่ละคนได้ลำดับต่างกัน)</label>
 <label class="fl" style="color:var(--ink)"><input type="checkbox" id="c2"> สุ่มลำดับตัวเลือก (ไม่ควรใช้ถ้ามีตัวเลือกแนว “ถูกทุกข้อ”)</label>
+<label class="fl" style="color:var(--ink)"><input type="checkbox" id="c4"> แสดงเฉลยและคะแนนให้ผู้สอบดูหลังส่ง เมื่อเลือกโหมด “หลังอบรม” (ก่อนอบรมจะไม่แสดง)</label>
+<p class="note" style="margin:0 0 6px">ถ้าเปิดข้อนี้ เฉลยจะฝังอยู่ในไฟล์ exam.html (เข้ารหัสแบบง่าย ๆ) ผู้ที่รู้วิธีเปิดดูโค้ดอาจเห็นเฉลยได้ แม้เลือกโหมดก่อนอบรม ถ้าต้องการปิดเฉลยสนิท ให้ปิดข้อนี้</p>
 <label class="fl">สุ่มเลือกมาออกสอบกี่ข้อจากทั้งหมด (เว้นว่าง = ออกทุกข้อ) <input type="number" id="c3" min="1" style="width:110px;margin-left:8px;padding:6px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);font:inherit"></label></div>
 </div>
 <div id="el"></div>
@@ -124,9 +126,9 @@ function clone(o){return JSON.parse(JSON.stringify(o))}
 function dl(name,txt,type){var u=URL.createObjectURL(new Blob([txt],{type:type})),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},1000)}
 LET="กขคงจฉ";
 var SNAP=jl("fa_snaps",{}),EX=jl("fa_exam",null);
-function seed(){EX={id:"fa1",title:"แบบทดสอบการปฐมพยาบาลเบื้องต้นและการช่วยชีวิตขั้นพื้นฐาน",sub:"Basic First Aid and Basic Life Support (CPR)",items:K.map(function(k){return{q:k[0],o:k[1].slice(),a:k[2],e:k[3]||""}}),cfg:{sq:false,so:false,n:0}};SNAP[EX.id]=clone(EX);js("fa_exam",EX);js("fa_snaps",SNAP)}
+function seed(){EX={id:"fa1",title:"แบบทดสอบการปฐมพยาบาลเบื้องต้นและการช่วยชีวิตขั้นพื้นฐาน",sub:"Basic First Aid and Basic Life Support (CPR)",items:K.map(function(k){return{q:k[0],o:k[1].slice(),a:k[2],e:k[3]||""}}),cfg:{sq:false,so:false,n:0,rk:true}};SNAP[EX.id]=clone(EX);js("fa_exam",EX);js("fa_snaps",SNAP)}
 if(!EX||!EX.items)seed();
-if(!EX.cfg)EX.cfg={sq:false,so:false,n:0};
+if(!EX.cfg)EX.cfg={sq:false,so:false,n:0,rk:true};
 function load(){return jl("fa_subs",[])}
 function save(a){js("fa_subs",a)}
 function getEx(r){if(r.eid&&SNAP[r.eid])return SNAP[r.eid];if(!r.eid&&r.a.length===EX.items.length)return EX;return null}
@@ -181,7 +183,7 @@ $("tb").onclick=function(e){var v=e.target.getAttribute("data-v"),x=e.target.get
 
 /* ---------- ตัวสร้างข้อสอบ ---------- */
 function ed(){
- $("et").value=EX.title;$("es").value=EX.sub;$("c1").checked=!!EX.cfg.sq;$("c2").checked=!!EX.cfg.so;$("c3").value=EX.cfg.n||"";
+ $("et").value=EX.title;$("es").value=EX.sub;$("c4").checked=EX.cfg.rk!==false;$("c1").checked=!!EX.cfg.sq;$("c2").checked=!!EX.cfg.so;$("c3").value=EX.cfg.n||"";
  var h="";EX.items.forEach(function(it,i){
   h+='<div class="card qe" data-i="'+i+'"><span class="mv"><button class="sec" data-a="up" aria-label="เลื่อนขึ้น">▲</button><button class="sec" data-a="dn" aria-label="เลื่อนลง">▼</button><button class="del" data-a="rm">ลบข้อ</button></span><b>ข้อ '+(i+1)+'</b><textarea data-f="q" aria-label="โจทย์ข้อ '+(i+1)+'">'+esc(it.q)+"</textarea>";
   it.o.forEach(function(o,k){h+='<div class="op"><input type="radio" name="c'+i+'" data-f="a" data-k="'+k+'"'+(it.a===k?" checked":"")+' aria-label="ตั้งเป็นคำตอบที่ถูก"><span>'+LET.charAt(k)+'.</span><input type="text" data-f="o" data-k="'+k+'" value="'+esc(o)+'" aria-label="ตัวเลือก '+LET.charAt(k)+'">'+(it.o.length>2?'<button class="del" data-a="ro" data-k="'+k+'" aria-label="ลบตัวเลือก">✕</button>':"")+"</div>"});
@@ -191,8 +193,8 @@ function ed(){
 }
 $("et").oninput=function(){EX.title=this.value;js("fa_exam",EX)};
 $("es").oninput=function(){EX.sub=this.value;js("fa_exam",EX)};
-function cf(){EX.cfg={sq:$("c1").checked,so:$("c2").checked,n:parseInt($("c3").value,10)||0};js("fa_exam",EX)}
-$("c1").onchange=$("c2").onchange=$("c3").oninput=cf;
+function cf(){EX.cfg={sq:$("c1").checked,so:$("c2").checked,n:parseInt($("c3").value,10)||0,rk:$("c4").checked};js("fa_exam",EX)}
+$("c1").onchange=$("c2").onchange=$("c4").onchange=$("c3").oninput=cf;
 function onEdit(e){var c=e.target.closest(".qe");if(!c)return;var it=EX.items[+c.getAttribute("data-i")],f=e.target.getAttribute("data-f"),k=+e.target.getAttribute("data-k");
  if(f==="q")it.q=e.target.value;else if(f==="o")it.o[k]=e.target.value;else if(f==="e")it.e=e.target.value;else if(f==="a")it.a=k;js("fa_exam",EX)}
 $("el").oninput=onEdit;$("el").onchange=onEdit;
@@ -217,7 +219,7 @@ $("oj").onchange=function(e){var f=e.target.files[0];if(!f)return;var rd=new Fil
  rd.onload=function(){try{var j=JSON.parse(rd.result);if(!j||!Array.isArray(j.items))throw 0;
   j.items.forEach(function(it){if(typeof it.q!=="string"||!Array.isArray(it.o)||typeof it.a!=="number")throw 0;it.e=it.e||""});
   if(!confirm("แทนที่ข้อสอบที่กำลังแก้อยู่ด้วยไฟล์นี้?"))return;
-  EX={id:"",title:j.title||"",sub:j.sub||"",items:j.items,cfg:j.cfg||{sq:false,so:false,n:0}};js("fa_exam",EX);ed()}catch(x){alert("ไฟล์ชุดข้อสอบไม่ถูกต้อง")}e.target.value=""};rd.readAsText(f)};
+  EX={id:"",title:j.title||"",sub:j.sub||"",items:j.items,cfg:j.cfg||{sq:false,so:false,n:0,rk:true}};js("fa_exam",EX);ed()}catch(x){alert("ไฟล์ชุดข้อสอบไม่ถูกต้อง")}e.target.value=""};rd.readAsText(f)};
 $("sd").onclick=function(){if(confirm("แทนที่ข้อสอบที่กำลังแก้อยู่ด้วยข้อสอบตัวอย่าง (ปฐมพยาบาล 20 ข้อ)?")){seed();ed()}};
 
 /* ---------- แม่แบบหน้าผู้สอบ (ไม่มีเฉลย) ---------- */
@@ -225,9 +227,9 @@ var TPL=`<!DOCTYPE html>
 <html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>แบบทดสอบ</title>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f4f6f6;--card:#fff;--ink:#16252b;--mute:#566a72;--line:#d3dde0;--red:#c62828;--rbg:#fde4e2;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10191d;--card:#18262b;--ink:#e9f1f3;--mute:#9db3ba;--line:#2d4249;--red:#ef5350;--rbg:#41201d;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#10191d;--card:#18262b;--ink:#e9f1f3;--mute:#9db3ba;--line:#2d4249;--red:#ef5350;--rbg:#41201d;color-scheme:dark}
+:root{--bg:#f4f6f6;--card:#fff;--ink:#16252b;--mute:#566a72;--line:#d3dde0;--red:#c62828;--rbg:#fde4e2;--g:#12714a;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10191d;--card:#18262b;--ink:#e9f1f3;--mute:#9db3ba;--line:#2d4249;--red:#ef5350;--rbg:#41201d;--g:#4cc88a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#10191d;--card:#18262b;--ink:#e9f1f3;--mute:#9db3ba;--line:#2d4249;--red:#ef5350;--rbg:#41201d;--g:#4cc88a;color-scheme:dark}
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.7 "Sarabun",system-ui,sans-serif}
 header,main{max-width:720px;margin:0 auto;padding:0 18px}
@@ -256,6 +258,7 @@ input[type=text],textarea{width:100%;font:inherit;padding:8px 10px;border:1px so
 button{font:600 17px "Sarabun",sans-serif;padding:10px 22px;border:0;background:var(--red);color:#fff;border-radius:6px;cursor:pointer}
 button.sec{background:transparent;color:var(--ink);border:2px solid var(--line)}
 button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.dq{padding:10px 0;border-top:1px dashed var(--line)}.ok{color:var(--g);font-weight:600}.bad{color:var(--red);font-weight:600}#rv h2{font-size:22px;margin:18px 0 4px}
 #done{display:none;background:var(--card);border:2px solid var(--red);border-radius:6px;padding:18px;margin:20px 0}
 #done h2{margin:0 0 6px}textarea{height:90px;font-size:13px;word-break:break-all}
 #err{color:var(--red);font-weight:600}
@@ -274,10 +277,10 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 <div id="done" role="status"><h2>ส่งคำตอบเรียบร้อยแล้ว</h2>
 <p>ผู้ดูแลจะตรวจและแจ้งคะแนนให้ทราบ หากผู้ดูแลอยู่คนละเครื่อง ให้ส่งไฟล์ผลหรือรหัสด้านล่างให้ผู้ดูแล</p>
 <p><button id="dl">ดาวน์โหลดไฟล์ผล</button> <button id="cp" class="sec">คัดลอกรหัส</button></p>
-<textarea id="code" readonly aria-label="รหัสผลสอบ"></textarea></div>
+<textarea id="code" readonly aria-label="รหัสผลสอบ"></textarea><div id="rv"></div></div>
 </main>
 <script>
-var EX=__DATA__;
+var EX=__DATA__;var KEY="__KEY__";
 var LET="กขคงจฉ",L=document.getElementById("list"),rec=null;
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 var CF=EX.cfg||{};
@@ -305,8 +308,14 @@ document.getElementById("go").onclick=function(){
  try{var all=JSON.parse(localStorage.getItem("fa_subs")||"[]");all.push(rec);localStorage.setItem("fa_subs",JSON.stringify(all))}catch(e){}
  document.getElementById("code").value=btoa(unescape(encodeURIComponent(JSON.stringify(rec))));
  document.getElementById("form").style.display="none";
- document.getElementById("done").style.display="block";window.scrollTo(0,0);
+ document.getElementById("done").style.display="block";
+ if(rec.m==="หลังอบรม"&&KEY){try{review()}catch(e){}}
+ window.scrollTo(0,0);
 };
+function review(){var K=JSON.parse(decodeURIComponent(escape(atob(KEY)))),s=0,h="";
+ ord.forEach(function(i,p){var d=EX.items[i],a=rec.a[i],ok=a===K[i][0];if(ok)s++;
+  h+='<div class="dq"><b>'+(p+1)+". "+esc(d.q)+"</b><br>คำตอบของคุณ: "+(a<0?"ไม่ได้ตอบ":esc(d.o[a]))+' <span class="'+(ok?"ok":"bad")+'">'+(ok?"✓ ถูก":"✗ ผิด")+"</span>"+(ok?"":"<br>เฉลย: "+esc(d.o[K[i][0]]))+(K[i][1]?'<br><span class="sub">'+esc(K[i][1])+"</span>":"")+"</div>"});
+ document.getElementById("rv").innerHTML='<h2>คะแนนของคุณ '+s+' / '+ord.length+'</h2><p class="sub">เฉลยรายข้อ</p>'+h}
 document.getElementById("dl").onclick=function(){
  var u=URL.createObjectURL(new Blob([JSON.stringify(rec)],{type:"application/json"})),a=document.createElement("a");
  a.href=u;a.download="result-"+rec.id+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},1000);
@@ -316,7 +325,8 @@ document.getElementById("cp").onclick=function(){var t=document.getElementById("
 function buildExam(ex){
  var pub={id:ex.id,title:ex.title,sub:ex.sub,items:ex.items.map(function(i){return{q:i.q,o:i.o}}),cfg:ex.cfg||{}};
  var data=JSON.stringify(pub).replace(/</g,"\\u003c");
- return TPL.replace("__DATA__",function(){return data});
+ var key=ex.cfg&&ex.cfg.rk===false?"":btoa(unescape(encodeURIComponent(JSON.stringify(ex.items.map(function(i){return[i.a,i.e||""]})))));
+ return TPL.replace("__DATA__",function(){return data}).replace("__KEY__",function(){return key});
 }
 </script>
 </body>
