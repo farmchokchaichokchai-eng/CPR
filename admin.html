@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>หลังบ้าน – ตรวจแบบทดสอบการปฐมพยาบาล</title>
+<title>หลังบ้าน – สร้างข้อสอบและตรวจผล</title>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f1f4f5;--card:#fff;--ink:#16252b;--mute:#566a72;--line:#d3dde0;--navy:#1f3a4d;--red:#c62828;--green:#12714a;--gbg:#dff3e7;--rbg:#fde4e2;--on:#fff;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -33,7 +33,13 @@ th,td{border-bottom:1px solid var(--line);padding:7px 10px;text-align:left;white
 .ib{display:flex;align-items:center;gap:10px;padding:3px 0}.ib .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ib .b{width:140px;height:10px;background:var(--line);border-radius:5px;overflow:hidden;flex:none}.ib .b i{display:block;height:100%;background:var(--green)}
 .ib .p{width:48px;text-align:right;flex:none}
-#msg{color:var(--green);font-weight:600}
+#msg,#xm{color:var(--green);font-weight:600}
+input[type=text]{font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);width:100%}
+.tabs{display:flex;gap:8px;margin:14px 0 0}
+.qe textarea{height:66px;margin:8px 0}.op{display:flex;gap:8px;align-items:center;margin:4px 0}.op span{width:22px}
+.op input[type=radio]{accent-color:var(--green);width:18px;height:18px}.ex{margin-top:8px}
+.mv{float:right;display:flex;gap:6px}.fl{display:block;font-size:14px;color:var(--mute);margin:8px 0}
+.bar{position:sticky;bottom:0;background:var(--bg);padding:10px 0 14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 </style>
 </head>
 <body>
@@ -44,8 +50,25 @@ th,td{border-bottom:1px solid var(--line);padding:7px 10px;text-align:left;white
 <p id="lerr" class="bad" role="alert"></p></div>
 </div>
 <div class="wrap" id="app" style="display:none">
-<div class="top"><h1>หลังบ้าน · ตรวจแบบทดสอบการปฐมพยาบาล</h1><button class="sec" id="out">ออกจากระบบ</button></div>
+<div class="top"><h1>หลังบ้าน · สร้างข้อสอบและตรวจผล</h1><button class="sec" id="out">ออกจากระบบ</button></div>
 
+<div class="tabs"><button id="t1">สร้าง/แก้ข้อสอบ</button><button id="t2" class="sec">ผลสอบ</button></div>
+<div id="pe">
+<h2>สร้างข้อสอบ <span class="note" id="cnt"></span></h2>
+<div class="card">
+<label class="fl">ชื่อข้อสอบ<input type="text" id="et"></label>
+<label class="fl">คำอธิบายใต้ชื่อ (ไม่บังคับ)<input type="text" id="es"></label>
+<p class="note">พิมพ์โจทย์และตัวเลือก ติ๊กวงกลมหน้าตัวเลือกที่เป็นคำตอบที่ถูก เมื่อเสร็จให้กด “ดาวน์โหลด exam.html” แล้วแจกไฟล์นั้นให้ผู้สอบ (ไฟล์ของผู้สอบไม่มีเฉลย) ระบบบันทึกฉบับร่างในเบราว์เซอร์นี้อัตโนมัติ</p>
+<div style="margin-top:10px"><b>ตัวเลือกการสุ่ม</b>
+<label class="fl" style="color:var(--ink)"><input type="checkbox" id="c1"> สุ่มลำดับข้อ (ผู้สอบแต่ละคนได้ลำดับต่างกัน)</label>
+<label class="fl" style="color:var(--ink)"><input type="checkbox" id="c2"> สุ่มลำดับตัวเลือก (ไม่ควรใช้ถ้ามีตัวเลือกแนว “ถูกทุกข้อ”)</label>
+<label class="fl">สุ่มเลือกมาออกสอบกี่ข้อจากทั้งหมด (เว้นว่าง = ออกทุกข้อ) <input type="number" id="c3" min="1" style="width:110px;margin-left:8px;padding:6px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);font:inherit"></label></div>
+</div>
+<div id="el"></div>
+<p><button id="aq">+ เพิ่มข้อสอบ</button></p>
+<div class="bar"><button id="xp">ดาวน์โหลด exam.html</button><button class="sec" id="sj">บันทึกชุดข้อสอบ (.json)</button><label class="btn sec" style="border:2px solid var(--line);background:transparent;color:var(--ink)">เปิดชุดข้อสอบ<input type="file" id="oj" accept=".json,application/json" style="display:none"></label><button class="sec" id="sd">ข้อสอบตัวอย่าง</button><span id="xm" role="status"></span></div>
+</div>
+<div id="pr" style="display:none">
 <h2>นำเข้าผลสอบ</h2>
 <div class="card">
 <p class="note">ผลที่ส่งจากหน้าผู้สอบในเบราว์เซอร์เครื่องนี้จะแสดงอัตโนมัติ ถ้าผู้สอบใช้เครื่องอื่น ให้นำเข้าไฟล์ผล (.json) หรือวางรหัส (หนึ่งรหัสต่อบรรทัด)</p>
@@ -66,6 +89,7 @@ th,td{border-bottom:1px solid var(--line);padding:7px 10px;text-align:left;white
 
 <h2>อัตราตอบถูกรายข้อ</h2>
 <div class="card" id="ia"></div>
+</div>
 </div>
 <script>
 var ADMIN_PASS="admin1234"; // เปลี่ยนรหัสผ่านตรงนี้ก่อนนำไปใช้
@@ -94,15 +118,28 @@ var K=[
 ];
 function $(i){return document.getElementById(i)}
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
-function load(){try{return JSON.parse(localStorage.getItem("fa_subs")||"[]")}catch(e){return[]}}
-function save(a){try{localStorage.setItem("fa_subs",JSON.stringify(a))}catch(e){}}
-function score(r){var s=0;r.a.forEach(function(x,i){if(x===K[i][2])s++});return s}
+function jl(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
+function js(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function clone(o){return JSON.parse(JSON.stringify(o))}
+function dl(name,txt,type){var u=URL.createObjectURL(new Blob([txt],{type:type})),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},1000)}
+LET="กขคงจฉ";
+var SNAP=jl("fa_snaps",{}),EX=jl("fa_exam",null);
+function seed(){EX={id:"fa1",title:"แบบทดสอบการปฐมพยาบาลเบื้องต้นและการช่วยชีวิตขั้นพื้นฐาน",sub:"Basic First Aid and Basic Life Support (CPR)",items:K.map(function(k){return{q:k[0],o:k[1].slice(),a:k[2],e:k[3]||""}}),cfg:{sq:false,so:false,n:0}};SNAP[EX.id]=clone(EX);js("fa_exam",EX);js("fa_snaps",SNAP)}
+if(!EX||!EX.items)seed();
+if(!EX.cfg)EX.cfg={sq:false,so:false,n:0};
+function load(){return jl("fa_subs",[])}
+function save(a){js("fa_subs",a)}
+function getEx(r){if(r.eid&&SNAP[r.eid])return SNAP[r.eid];if(!r.eid&&r.a.length===EX.items.length)return EX;return null}
+function sc(r){var e=getEx(r);if(!e)return null;var s=0;r.a.forEach(function(x,i){if(e.items[i]&&x===e.items[i].a)s++});return s}
+function tot(r){var e=getEx(r);return e?r.a.filter(function(x){return x!==-2}).length:0}
 function fmt(t){var d=new Date(t);return isNaN(d)?"":d.toLocaleString("th-TH",{dateStyle:"short",timeStyle:"short"})}
-function valid(r){return r&&r.id&&typeof r.n==="string"&&Array.isArray(r.a)&&r.a.length===K.length}
+function valid(r){return r&&r.id&&typeof r.n==="string"&&Array.isArray(r.a)}
 function merge(list){var all=load(),ids={},n=0;all.forEach(function(r){ids[r.id]=1});
  list.forEach(function(r){if(valid(r)&&!ids[r.id]){all.push(r);ids[r.id]=1;n++}});save(all);render();return n}
 function say(t){$("msg").textContent=t}
-$("in").onclick=function(){if($("pw").value===ADMIN_PASS){$("login").style.display="none";$("app").style.display="block";render()}else $("lerr").textContent="รหัสผ่านไม่ถูกต้อง"};
+function tab(n){$("pe").style.display=n==1?"block":"none";$("pr").style.display=n==2?"block":"none";$("t1").className=n==1?"":"sec";$("t2").className=n==2?"":"sec"}
+$("t1").onclick=function(){tab(1)};$("t2").onclick=function(){tab(2);render()};
+$("in").onclick=function(){if($("pw").value===ADMIN_PASS){$("login").style.display="none";$("app").style.display="block";ed();render();tab(1)}else $("lerr").textContent="รหัสผ่านไม่ถูกต้อง"};
 $("pw").onkeydown=function(e){if(e.key==="Enter")$("in").click()};
 $("out").onclick=function(){$("app").style.display="none";$("login").style.display="block";$("pw").value="";$("lerr").textContent=""};
 $("fi").onchange=function(e){var fs=[].slice.call(e.target.files),n=0,left=fs.length,bad=0;
@@ -110,34 +147,177 @@ $("fi").onchange=function(e){var fs=[].slice.call(e.target.files),n=0,left=fs.le
 $("im").onclick=function(){var n=0,bad=0;$("cd").value.split(/\s+/).filter(Boolean).forEach(function(c){try{n+=merge([JSON.parse(decodeURIComponent(escape(atob(c))))])}catch(x){bad++}});say("นำเข้า "+n+" รายการ"+(bad?" · รหัสผิดรูปแบบ "+bad+" รายการ":""));$("cd").value=""};
 $("clr").onclick=function(){if(confirm("ล้างผลสอบทั้งหมดในเบราว์เซอร์นี้? การกระทำนี้ย้อนกลับไม่ได้")){save([]);render()}};
 $("csv").onclick=function(){var all=load();if(!all.length){say("ยังไม่มีข้อมูล");return}
- var h=["ชื่อ-สกุล","แผนก","ประเภท","คะแนน","เปอร์เซ็นต์","เวลาส่ง"];K.forEach(function(_,i){h.push("ข้อ"+(i+1))});
- var rows=[h].concat(all.map(function(r){var s=score(r);return[r.n,r.d,r.m,s,Math.round(s/K.length*100),r.t].concat(r.a.map(function(x){return x<0?"-":LET.charAt(x)}))}));
- var txt="\ufeff"+rows.map(function(r){return r.map(function(c){return '"'+String(c==null?"":c).replace(/"/g,'""')+'"'}).join(",")}).join("\r\n");
- var u=URL.createObjectURL(new Blob([txt],{type:"text/csv;charset=utf-8"})),a=document.createElement("a");a.href=u;a.download="first-aid-results.csv";document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},1000)};
+ var mx=0;all.forEach(function(r){if(r.a.length>mx)mx=r.a.length});
+ var h=["ชื่อ-สกุล","แผนก","ประเภท","คะแนน","คะแนนเต็ม","เปอร์เซ็นต์","เวลาส่ง"];for(var i=0;i<mx;i++)h.push("ข้อ"+(i+1));
+ var rows=[h].concat(all.map(function(r){var s=sc(r),t=tot(r);return[r.n,r.d,r.m,s==null?"":s,t||"",s==null?"":Math.round(s/t*100),r.t].concat(r.a.map(function(x){return x===-2?"":x<0?"-":LET.charAt(x)}))}));
+ dl("exam-results.csv","\ufeff"+rows.map(function(r){return r.map(function(c){return '"'+String(c==null?"":c).replace(/"/g,'""')+'"'}).join(",")}).join("\r\n"),"text/csv;charset=utf-8")};
 function avg(l){return l.length?(l.reduce(function(a,b){return a+b},0)/l.length).toFixed(1):"-"}
 function render(){
- var all=load().sort(function(a,b){return a.t<b.t?1:-1});
- var pre=all.filter(function(r){return r.m==="ก่อนอบรม"}).map(score),post=all.filter(function(r){return r.m==="หลังอบรม"}).map(score);
+ var all=load().sort(function(a,b){return a.t<b.t?1:-1}),pre=[],post=[];
+ all.forEach(function(r){var s=sc(r);if(s!=null)(r.m==="ก่อนอบรม"?pre:post).push(s)});
  $("st").innerHTML='<div><b>'+all.length+'</b><span>ผู้ส่งทั้งหมด</span></div><div><b>'+avg(pre)+'</b><span>คะแนนเฉลี่ย ก่อนอบรม ('+pre.length+' คน)</span></div><div><b>'+avg(post)+'</b><span>คะแนนเฉลี่ย หลังอบรม ('+post.length+' คน)</span></div>';
  var h="<tr><th>ชื่อ - สกุล</th><th>แผนก</th><th>ประเภท</th><th>คะแนน</th><th>%</th><th>เวลาส่ง</th><th></th></tr>";
  if(!all.length)h+='<tr><td colspan="7" class="note">ยังไม่มีผลสอบ นำเข้าไฟล์หรือรหัสจากผู้สอบด้านบน</td></tr>';
- all.forEach(function(r){var s=score(r);h+="<tr><td>"+esc(r.n)+"</td><td>"+esc(r.d)+"</td><td>"+esc(r.m)+"</td><td><b>"+s+"/"+K.length+"</b></td><td>"+Math.round(s/K.length*100)+"%</td><td>"+fmt(r.t)+'</td><td><button class="sec" data-v="'+esc(r.id)+'">ตรวจรายข้อ</button> <button class="del" data-x="'+esc(r.id)+'" aria-label="ลบ">ลบ</button></td></tr>'});
+ all.forEach(function(r){var s=sc(r),t=tot(r);h+="<tr><td>"+esc(r.n)+"</td><td>"+esc(r.d)+"</td><td>"+esc(r.m)+"</td><td>"+(s==null?'<span class="note">ไม่พบชุดข้อสอบ</span>':"<b>"+s+"/"+t+"</b>")+"</td><td>"+(s==null?"":Math.round(s/t*100)+"%")+"</td><td>"+fmt(r.t)+'</td><td><button class="sec" data-v="'+esc(r.id)+'">ตรวจรายข้อ</button> <button class="del" data-x="'+esc(r.id)+'" aria-label="ลบ">ลบ</button></td></tr>'});
  $("tb").innerHTML=h;
- var g={};all.slice().reverse().forEach(function(r){var k=r.n.trim().toLowerCase();g[k]=g[k]||{n:r.n,d:r.d};g[k][r.m]=score(r)});
+ var g={};all.slice().reverse().forEach(function(r){var s=sc(r);if(s==null)return;var k=r.n.trim().toLowerCase();g[k]=g[k]||{n:r.n,d:r.d};g[k][r.m]=s});
  var p="<tr><th>ชื่อ - สกุล</th><th>แผนก</th><th>ก่อนอบรม</th><th>หลังอบรม</th><th>เปลี่ยนแปลง</th></tr>",c=0;
  Object.keys(g).forEach(function(k){var x=g[k];if(x["ก่อนอบรม"]!=null&&x["หลังอบรม"]!=null){c++;var d=x["หลังอบรม"]-x["ก่อนอบรม"];p+="<tr><td>"+esc(x.n)+"</td><td>"+esc(x.d)+"</td><td>"+x["ก่อนอบรม"]+"</td><td>"+x["หลังอบรม"]+'</td><td class="'+(d>0?"pos":d<0?"neg":"")+'">'+(d>0?"+":"")+d+"</td></tr>"}});
  if(!c)p+='<tr><td colspan="5" class="note">ยังไม่มีผู้ที่ทำครบทั้งก่อนและหลังอบรม (จับคู่จากชื่อ - สกุล)</td></tr>';
  $("pp").innerHTML=p;
- var ia="";K.forEach(function(k,i){var ok=all.filter(function(r){return r.a[i]===k[2]}).length,pc=all.length?Math.round(ok/all.length*100):0;ia+='<div class="ib"><span class="t" title="'+esc(k[0])+'">'+(i+1)+". "+esc(k[0])+'</span><span class="b"><i style="width:'+pc+'%"></i></span><span class="p">'+pc+"%</span></div>"});
- $("ia").innerHTML=ia;
+ var base=SNAP[EX.id]||EX,rs=all.filter(function(r){return r.eid===EX.id||(!r.eid&&r.a.length===base.items.length)}),ia="";
+ base.items.forEach(function(it,i){var rr=rs.filter(function(r){return r.a[i]!==-2}),ok=rr.filter(function(r){return r.a[i]===it.a}).length,pc=rr.length?Math.round(ok/rr.length*100):0;ia+='<div class="ib"><span class="t" title="'+esc(it.q)+'">'+(i+1)+". "+esc(it.q)+'</span><span class="b"><i style="width:'+pc+'%"></i></span><span class="p">'+pc+"%</span></div>"});
+ $("ia").innerHTML=ia+'<p class="note">คำนวณจากผู้สอบ '+rs.length+" คน ในชุดข้อสอบที่ส่งออกล่าสุด</p>";
 }
 $("tb").onclick=function(e){var v=e.target.getAttribute("data-v"),x=e.target.getAttribute("data-x");
  if(x){if(confirm("ลบผลสอบรายการนี้?")){save(load().filter(function(r){return r.id!==x}));render()}return}
- if(!v)return;var nx=e.target.closest("tr").nextElementSibling;
+ if(!v)return;var row=e.target.closest("tr"),nx=row.nextElementSibling;
  if(nx&&nx.className==="dr"){nx.remove();return}
- var r=load().filter(function(r){return r.id===v})[0];if(!r)return;
- var h="";K.forEach(function(k,i){var a=r.a[i],ok=a===k[2];h+='<div class="dq"><b>'+(i+1)+". "+esc(k[0])+"</b><br>คำตอบผู้สอบ: "+(a<0?"ไม่ได้ตอบ":LET.charAt(a)+". "+esc(k[1][a]))+' <span class="'+(ok?"ok":"bad")+'">'+(ok?"✓ ถูก":"✗ ผิด")+"</span>"+(ok?"":"<br>เฉลย: "+LET.charAt(k[2])+". "+esc(k[1][k[2]]))+(k[3]?'<br><span class="note">'+esc(k[3])+"</span>":"")+"</div>"});
- var tr=document.createElement("tr");tr.className="dr";tr.innerHTML='<td colspan="7" class="det">'+h+"</td>";e.target.closest("tr").after(tr)};
+ var r=load().filter(function(r){return r.id===v})[0],ex=r&&getEx(r);if(!r)return;
+ var h="";
+ if(!ex)h='<p class="bad">ไม่พบชุดข้อสอบที่ตรงกับผลนี้ (อาจส่งมาจากข้อสอบที่สร้างในเครื่องอื่น)</p>';
+ else ex.items.forEach(function(k,i){var a=r.a[i],ok=a===k.a;if(a===-2)return;h+='<div class="dq"><b>'+(i+1)+". "+esc(k.q)+"</b><br>คำตอบผู้สอบ: "+(a==null||a<0?"ไม่ได้ตอบ":LET.charAt(a)+". "+esc(k.o[a]))+' <span class="'+(ok?"ok":"bad")+'">'+(ok?"✓ ถูก":"✗ ผิด")+"</span>"+(ok?"":"<br>เฉลย: "+LET.charAt(k.a)+". "+esc(k.o[k.a]))+(k.e?'<br><span class="note">'+esc(k.e)+"</span>":"")+"</div>"});
+ var tr=document.createElement("tr");tr.className="dr";tr.innerHTML='<td colspan="7" class="det">'+h+"</td>";row.after(tr)};
+
+/* ---------- ตัวสร้างข้อสอบ ---------- */
+function ed(){
+ $("et").value=EX.title;$("es").value=EX.sub;$("c1").checked=!!EX.cfg.sq;$("c2").checked=!!EX.cfg.so;$("c3").value=EX.cfg.n||"";
+ var h="";EX.items.forEach(function(it,i){
+  h+='<div class="card qe" data-i="'+i+'"><span class="mv"><button class="sec" data-a="up" aria-label="เลื่อนขึ้น">▲</button><button class="sec" data-a="dn" aria-label="เลื่อนลง">▼</button><button class="del" data-a="rm">ลบข้อ</button></span><b>ข้อ '+(i+1)+'</b><textarea data-f="q" aria-label="โจทย์ข้อ '+(i+1)+'">'+esc(it.q)+"</textarea>";
+  it.o.forEach(function(o,k){h+='<div class="op"><input type="radio" name="c'+i+'" data-f="a" data-k="'+k+'"'+(it.a===k?" checked":"")+' aria-label="ตั้งเป็นคำตอบที่ถูก"><span>'+LET.charAt(k)+'.</span><input type="text" data-f="o" data-k="'+k+'" value="'+esc(o)+'" aria-label="ตัวเลือก '+LET.charAt(k)+'">'+(it.o.length>2?'<button class="del" data-a="ro" data-k="'+k+'" aria-label="ลบตัวเลือก">✕</button>':"")+"</div>"});
+  h+=(it.o.length<6?'<button class="sec" data-a="ao">+ เพิ่มตัวเลือก</button> ':"")+'<input type="text" class="ex" data-f="e" placeholder="คำอธิบายเฉลย (ไม่บังคับ แสดงเฉพาะหลังบ้าน)" value="'+esc(it.e||"")+'" aria-label="คำอธิบายเฉลย"></div>'});
+ $("el").innerHTML=h||'<p class="note">ยังไม่มีข้อสอบ กด “+ เพิ่มข้อสอบ”</p>';
+ $("cnt").textContent=EX.items.length+" ข้อ";
+}
+$("et").oninput=function(){EX.title=this.value;js("fa_exam",EX)};
+$("es").oninput=function(){EX.sub=this.value;js("fa_exam",EX)};
+function cf(){EX.cfg={sq:$("c1").checked,so:$("c2").checked,n:parseInt($("c3").value,10)||0};js("fa_exam",EX)}
+$("c1").onchange=$("c2").onchange=$("c3").oninput=cf;
+function onEdit(e){var c=e.target.closest(".qe");if(!c)return;var it=EX.items[+c.getAttribute("data-i")],f=e.target.getAttribute("data-f"),k=+e.target.getAttribute("data-k");
+ if(f==="q")it.q=e.target.value;else if(f==="o")it.o[k]=e.target.value;else if(f==="e")it.e=e.target.value;else if(f==="a")it.a=k;js("fa_exam",EX)}
+$("el").oninput=onEdit;$("el").onchange=onEdit;
+$("el").onclick=function(e){var a=e.target.getAttribute("data-a"),c=e.target.closest(".qe");if(!a||!c)return;
+ var i=+c.getAttribute("data-i"),it=EX.items[i],k=+e.target.getAttribute("data-k"),t;
+ if(a==="up"&&i>0){t=EX.items[i-1];EX.items[i-1]=it;EX.items[i]=t}
+ else if(a==="dn"&&i<EX.items.length-1){t=EX.items[i+1];EX.items[i+1]=it;EX.items[i]=t}
+ else if(a==="rm"){if(!confirm("ลบข้อ "+(i+1)+" ?"))return;EX.items.splice(i,1)}
+ else if(a==="ao"){it.o.push("")}
+ else if(a==="ro"){it.o.splice(k,1);if(it.a===k)it.a=-1;else if(it.a>k)it.a--}
+ js("fa_exam",EX);ed()};
+$("aq").onclick=function(){EX.items.push({q:"",o:["","","",""],a:-1,e:""});js("fa_exam",EX);ed();var q=$("el").lastElementChild;q.scrollIntoView({behavior:"smooth",block:"center"});q.querySelector("textarea").focus()};
+function check(){if(!EX.title.trim())return"กรุณาตั้งชื่อข้อสอบ";if(!EX.items.length)return"ยังไม่มีข้อสอบ";var cn=EX.cfg.n;if(cn&&(cn<1||cn>EX.items.length))return"จำนวนข้อที่สุ่มต้องอยู่ระหว่าง 1 ถึง "+EX.items.length+" (เว้นว่างเพื่อใช้ทุกข้อ)";
+ for(var i=0;i<EX.items.length;i++){var it=EX.items[i],n="ข้อ "+(i+1)+": ";if(!it.q.trim())return n+"ยังไม่ได้ใส่โจทย์";
+  for(var k=0;k<it.o.length;k++)if(!it.o[k].trim())return n+"ตัวเลือก "+LET.charAt(k)+" ยังว่าง (ลบตัวเลือกที่ไม่ใช้)";
+  if(it.a<0||it.a>=it.o.length)return n+"ยังไม่ได้เลือกคำตอบที่ถูก"}return""}
+$("xp").onclick=function(){var bad=check();if(bad){alert(bad);return}
+ EX.id=Date.now().toString(36);SNAP[EX.id]=clone(EX);js("fa_exam",EX);js("fa_snaps",SNAP);
+ dl("exam.html",buildExam(EX),"text/html;charset=utf-8");$("xm").textContent="สร้างไฟล์ exam.html แล้ว ("+EX.items.length+" ข้อ) นำไปแจกผู้สอบได้เลย"};
+$("sj").onclick=function(){dl("exam-set.json",JSON.stringify(EX,null,1),"application/json")};
+$("oj").onchange=function(e){var f=e.target.files[0];if(!f)return;var rd=new FileReader();
+ rd.onload=function(){try{var j=JSON.parse(rd.result);if(!j||!Array.isArray(j.items))throw 0;
+  j.items.forEach(function(it){if(typeof it.q!=="string"||!Array.isArray(it.o)||typeof it.a!=="number")throw 0;it.e=it.e||""});
+  if(!confirm("แทนที่ข้อสอบที่กำลังแก้อยู่ด้วยไฟล์นี้?"))return;
+  EX={id:"",title:j.title||"",sub:j.sub||"",items:j.items,cfg:j.cfg||{sq:false,so:false,n:0}};js("fa_exam",EX);ed()}catch(x){alert("ไฟล์ชุดข้อสอบไม่ถูกต้อง")}e.target.value=""};rd.readAsText(f)};
+$("sd").onclick=function(){if(confirm("แทนที่ข้อสอบที่กำลังแก้อยู่ด้วยข้อสอบตัวอย่าง (ปฐมพยาบาล 20 ข้อ)?")){seed();ed()}};
+
+/* ---------- แม่แบบหน้าผู้สอบ (ไม่มีเฉลย) ---------- */
+var TPL=`<!DOCTYPE html>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>แบบทดสอบ</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6f6;--card:#fff;--ink:#16252b;--mute:#566a72;--line:#d3dde0;--red:#c62828;--rbg:#fde4e2;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10191d;--card:#18262b;--ink:#e9f1f3;--mute:#9db3ba;--line:#2d4249;--red:#ef5350;--rbg:#41201d;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#10191d;--card:#18262b;--ink:#e9f1f3;--mute:#9db3ba;--line:#2d4249;--red:#ef5350;--rbg:#41201d;color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.7 "Sarabun",system-ui,sans-serif}
+header,main{max-width:720px;margin:0 auto;padding:0 18px}
+header{padding-top:28px;display:flex;gap:16px;align-items:center}
+.cross{flex:none;width:56px;height:56px;border-radius:8px;background:var(--red);position:relative}
+.cross::before,.cross::after{content:"";position:absolute;background:#fff;border-radius:2px}
+.cross::before{left:23px;top:11px;width:10px;height:34px}.cross::after{left:11px;top:23px;width:34px;height:10px}
+h1{font-size:clamp(23px,6vw,34px);line-height:1.25;font-weight:800;margin:0}
+.sub{color:var(--mute);margin:2px 0 0;font-size:15px}
+fieldset{border:1px solid var(--line);background:var(--card);border-radius:6px;padding:14px 16px;margin:20px 0 0}
+legend{font-weight:600;padding:0 6px}
+.row{display:flex;gap:12px;flex-wrap:wrap}.row label{flex:1 1 220px;font-size:15px;color:var(--mute)}
+input[type=text],textarea{width:100%;font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink)}
+.mode{display:flex;gap:10px;margin-top:10px}
+.mode label{flex:1;text-align:center;padding:8px;border:2px solid var(--line);border-radius:6px;cursor:pointer;font-weight:600}
+.mode input{position:absolute;opacity:0}
+.mode label:has(input:checked){border-color:var(--red);background:var(--rbg)}
+.mode label:has(input:focus-visible){outline:3px solid var(--ink)}
+.q{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--line);border-radius:6px;padding:16px 16px 10px;margin:16px 0}
+.q.miss{border-left-color:var(--red)}
+.q h2{font-size:18px;font-weight:600;margin:0 0 8px;line-height:1.5}
+.o{display:flex;gap:10px;align-items:flex-start;padding:7px 10px;margin:4px 0;border:1px solid var(--line);border-radius:4px;cursor:pointer}
+.o:hover{border-color:var(--red)}.o input{margin-top:7px;accent-color:var(--red)}
+.o:focus-within{outline:3px solid var(--ink);outline-offset:1px}
+.bar{position:sticky;bottom:0;background:var(--bg);padding:12px 0 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+button{font:600 17px "Sarabun",sans-serif;padding:10px 22px;border:0;background:var(--red);color:#fff;border-radius:6px;cursor:pointer}
+button.sec{background:transparent;color:var(--ink);border:2px solid var(--line)}
+button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+#done{display:none;background:var(--card);border:2px solid var(--red);border-radius:6px;padding:18px;margin:20px 0}
+#done h2{margin:0 0 6px}textarea{height:90px;font-size:13px;word-break:break-all}
+#err{color:var(--red);font-weight:600}
+</style></head><body>
+<header><div class="cross" aria-hidden="true"></div><div><h1 id="h"></h1><p class="sub" id="sb"></p></div></header>
+<main>
+<div id="form">
+<fieldset><legend>ข้อมูลผู้ทำแบบทดสอบ</legend>
+<div class="row"><label>ชื่อ - สกุล (จำเป็น)<input type="text" id="nm" autocomplete="name"></label><label>ฝ่าย/แผนก/สังกัด<input type="text" id="dp"></label></div>
+<div class="mode" role="radiogroup" aria-label="ประเภทแบบทดสอบ"><label><input type="radio" name="mode" value="ก่อนอบรม" checked>ก่อนอบรม</label><label><input type="radio" name="mode" value="หลังอบรม">หลังอบรม</label></div>
+</fieldset>
+<p class="sub" style="margin-top:16px">เลือกคำตอบที่ถูกต้องที่สุดเพียงข้อเดียว เมื่อเสร็จแล้วกด “ส่งคำตอบ” ผู้ดูแลจะเป็นผู้ตรวจและแจ้งคะแนน</p>
+<div id="list"></div>
+<div class="bar"><button id="go">ส่งคำตอบ</button><span id="err" role="alert"></span></div>
+</div>
+<div id="done" role="status"><h2>ส่งคำตอบเรียบร้อยแล้ว</h2>
+<p>ผู้ดูแลจะตรวจและแจ้งคะแนนให้ทราบ หากผู้ดูแลอยู่คนละเครื่อง ให้ส่งไฟล์ผลหรือรหัสด้านล่างให้ผู้ดูแล</p>
+<p><button id="dl">ดาวน์โหลดไฟล์ผล</button> <button id="cp" class="sec">คัดลอกรหัส</button></p>
+<textarea id="code" readonly aria-label="รหัสผลสอบ"></textarea></div>
+</main>
+<script>
+var EX=__DATA__;
+var LET="กขคงจฉ",L=document.getElementById("list"),rec=null;
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+var CF=EX.cfg||{};
+function shuf(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+var ord=EX.items.map(function(_,i){return i});
+if(CF.n&&CF.n<ord.length){ord=shuf(ord).slice(0,CF.n);if(!CF.sq)ord.sort(function(a,b){return a-b})}
+if(CF.sq)shuf(ord);
+document.title=EX.title;document.getElementById("h").textContent=EX.title;
+document.getElementById("sb").textContent=(EX.sub?EX.sub+" · ":"")+ord.length+" ข้อ";
+ord.forEach(function(i,p){
+ var d=EX.items[i],q=document.createElement("section");q.className="q";q.id="q"+i;
+ var os=d.o.map(function(_,j){return j});if(CF.so)shuf(os);
+ var h="<h2>"+(p+1)+". "+esc(d.q)+"</h2>";
+ os.forEach(function(j,k){h+='<label class="o"><input type="radio" name="q'+i+'" value="'+j+'"><span>'+LET.charAt(k)+". "+esc(d.o[j])+"</span></label>"});
+ q.innerHTML=h;L.appendChild(q);
+});
+document.getElementById("go").onclick=function(){
+ var nm=document.getElementById("nm").value.trim(),err=document.getElementById("err");
+ if(!nm){err.textContent="กรุณากรอกชื่อ - สกุล";document.getElementById("nm").focus();return}
+ var a=EX.items.map(function(){return -2}),miss=[],first=null;
+ ord.forEach(function(i,p){var c=document.querySelector("input[name=q"+i+"]:checked");a[i]=c?+c.value:-1;document.getElementById("q"+i).classList.toggle("miss",!c);if(!c){miss.push(p+1);if(first==null)first=i}});
+ if(miss.length){err.textContent="ยังไม่ได้ตอบข้อ "+miss.join(", ");document.getElementById("q"+first).scrollIntoView({behavior:"smooth",block:"center"});return}
+ err.textContent="";
+ rec={id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),eid:EX.id,n:nm,d:document.getElementById("dp").value.trim(),m:document.querySelector("input[name=mode]:checked").value,a:a,t:new Date().toISOString()};
+ try{var all=JSON.parse(localStorage.getItem("fa_subs")||"[]");all.push(rec);localStorage.setItem("fa_subs",JSON.stringify(all))}catch(e){}
+ document.getElementById("code").value=btoa(unescape(encodeURIComponent(JSON.stringify(rec))));
+ document.getElementById("form").style.display="none";
+ document.getElementById("done").style.display="block";window.scrollTo(0,0);
+};
+document.getElementById("dl").onclick=function(){
+ var u=URL.createObjectURL(new Blob([JSON.stringify(rec)],{type:"application/json"})),a=document.createElement("a");
+ a.href=u;a.download="result-"+rec.id+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},1000);
+};
+document.getElementById("cp").onclick=function(){var t=document.getElementById("code");t.select();try{navigator.clipboard.writeText(t.value)}catch(e){document.execCommand("copy")}this.textContent="คัดลอกแล้ว"};
+<\/script></body></html>`;
+function buildExam(ex){
+ var pub={id:ex.id,title:ex.title,sub:ex.sub,items:ex.items.map(function(i){return{q:i.q,o:i.o}}),cfg:ex.cfg||{}};
+ var data=JSON.stringify(pub).replace(/</g,"\\u003c");
+ return TPL.replace("__DATA__",function(){return data});
+}
 </script>
 </body>
 </html>
