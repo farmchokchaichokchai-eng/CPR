@@ -58,26 +58,21 @@ input[type=text]{font:inherit;padding:7px 10px;border:1px solid var(--line);bord
 <div class="card">
 <label class="fl">ชื่อข้อสอบ<input type="text" id="et"></label>
 <label class="fl">คำอธิบายใต้ชื่อ (ไม่บังคับ)<input type="text" id="es"></label>
-<p class="note">พิมพ์โจทย์และตัวเลือก ติ๊กวงกลมหน้าตัวเลือกที่เป็นคำตอบที่ถูก เมื่อเสร็จให้กด “ดาวน์โหลด exam.html” แล้วแจกไฟล์นั้นให้ผู้สอบ (ไฟล์ของผู้สอบไม่มีเฉลย) ระบบบันทึกฉบับร่างในเบราว์เซอร์นี้อัตโนมัติ</p>
+<p class="note">พิมพ์โจทย์และตัวเลือก ติ๊กวงกลมหน้าตัวเลือกที่เป็นคำตอบที่ถูก เมื่อเสร็จให้กด “เผยแพร่ข้อสอบ” ผู้สอบที่เปิดหน้า exam.html จะเห็นข้อสอบใหม่ทันที (ไม่ต้องแจกไฟล์ใหม่ ไฟล์ exam.html ใช้ซ้ำได้ทุกชุด) ฉบับร่างบันทึกในเบราว์เซอร์นี้อัตโนมัติ</p>
 <div style="margin-top:10px"><b>ตัวเลือกการสุ่ม</b>
 <label class="fl" style="color:var(--ink)"><input type="checkbox" id="c1"> สุ่มลำดับข้อ (ผู้สอบแต่ละคนได้ลำดับต่างกัน)</label>
 <label class="fl" style="color:var(--ink)"><input type="checkbox" id="c2"> สุ่มลำดับตัวเลือก (ไม่ควรใช้ถ้ามีตัวเลือกแนว “ถูกทุกข้อ”)</label>
 <label class="fl" style="color:var(--ink)"><input type="checkbox" id="c4"> แสดงเฉลยและคะแนนให้ผู้สอบดูหลังส่ง เมื่อเลือกโหมด “หลังอบรม” (ก่อนอบรมจะไม่แสดง)</label>
-<p class="note" style="margin:0 0 6px">ถ้าเปิดข้อนี้ เฉลยจะฝังอยู่ในไฟล์ exam.html (เข้ารหัสแบบง่าย ๆ) ผู้ที่รู้วิธีเปิดดูโค้ดอาจเห็นเฉลยได้ แม้เลือกโหมดก่อนอบรม ถ้าต้องการปิดเฉลยสนิท ให้ปิดข้อนี้</p>
+<p class="note" style="margin:0 0 6px">เฉลยเก็บในฐานข้อมูลและหน้าผู้สอบจะโหลดมาแสดงหลังส่งแบบ “หลังอบรม” เท่านั้น แต่ผู้ที่รู้วิธีเรียกฐานข้อมูลโดยตรงอาจเห็นเฉลยได้ ถ้าต้องการปิดสนิท ให้ปิดข้อนี้</p>
 <label class="fl">สุ่มเลือกมาออกสอบกี่ข้อจากทั้งหมด (เว้นว่าง = ออกทุกข้อ) <input type="number" id="c3" min="1" style="width:110px;margin-left:8px;padding:6px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);font:inherit"></label></div>
 </div>
 <div id="el"></div>
 <p><button id="aq">+ เพิ่มข้อสอบ</button></p>
-<div class="bar"><button id="xp">ดาวน์โหลด exam.html</button><button class="sec" id="sj">บันทึกชุดข้อสอบ (.json)</button><label class="btn sec" style="border:2px solid var(--line);background:transparent;color:var(--ink)">เปิดชุดข้อสอบ<input type="file" id="oj" accept=".json,application/json" style="display:none"></label><button class="sec" id="sd">ข้อสอบตัวอย่าง</button><span id="xm" role="status"></span></div>
+<div class="bar"><button id="pb">เผยแพร่ข้อสอบ</button><button class="sec" id="pl">ดึงข้อสอบที่เผยแพร่</button><button class="sec" id="xp">ดาวน์โหลด exam.html (หน้าผู้สอบ)</button><button class="sec" id="sj">บันทึกชุดข้อสอบ (.json)</button><label class="btn sec" style="border:2px solid var(--line);background:transparent;color:var(--ink)">เปิดชุดข้อสอบ<input type="file" id="oj" accept=".json,application/json" style="display:none"></label><button class="sec" id="sd">ข้อสอบตัวอย่าง</button><span id="xm" role="status"></span></div>
 </div>
 <div id="pr" style="display:none">
-<h2>นำเข้าผลสอบ</h2>
-<div class="card">
-<p class="note">ผลที่ส่งจากหน้าผู้สอบในเบราว์เซอร์เครื่องนี้จะแสดงอัตโนมัติ ถ้าผู้สอบใช้เครื่องอื่น ให้นำเข้าไฟล์ผล (.json) หรือวางรหัส (หนึ่งรหัสต่อบรรทัด)</p>
-<p><label class="btn">เลือกไฟล์ผล (.json)<input type="file" id="fi" accept=".json,application/json" multiple style="display:none"></label></p>
-<textarea id="cd" aria-label="วางรหัสผลสอบ"></textarea>
-<p><button id="im">นำเข้ารหัส</button> <span id="msg" role="status"></span></p>
-</div>
+<h2>ผลสอบ <span class="note">(จากฐานข้อมูล Firebase)</span></h2>
+<p><button id="rf">รีเฟรชข้อมูล</button> <span id="msg" role="status"></span></p>
 
 <h2>สรุป</h2>
 <div class="stats" id="st"></div>
@@ -118,48 +113,51 @@ var K=[
 ["การปฐมพยาบาลสำหรับผู้มีบาดแผลใหญ่และเลือดไหลไม่หยุด ควรทำอย่างไร",["กดแผลและยกเหนือหัวใจ","ใช้น้ำร้อนราด","ปล่อยให้เลือดไหลตามธรรมชาติ","นวดแผล"],0],
 ["การปฐมพยาบาลสำหรับผู้มีอาการหายใจติดขัดจากโรคหืด คือ",["ทำให้สงบและใช้ยาพ่น (inhaler)","ทำ CPR ทันที","ให้ดื่มน้ำเยอะ ๆ","ปล่อยให้พักเฉย ๆ"],0]
 ];
+var DB="https://cpr-farm-default-rtdb.firebaseio.com";
 function $(i){return document.getElementById(i)}
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 function jl(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
 function js(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 function clone(o){return JSON.parse(JSON.stringify(o))}
 function dl(name,txt,type){var u=URL.createObjectURL(new Blob([txt],{type:type})),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},1000)}
+function api(m,p,b){var o={method:m};if(b!==undefined)o.body=JSON.stringify(b);return fetch(DB+p+".json",o).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()})}
 LET="กขคงจฉ";
-var SNAP=jl("fa_snaps",{}),EX=jl("fa_exam",null);
-function seed(){EX={id:"fa1",title:"แบบทดสอบการปฐมพยาบาลเบื้องต้นและการช่วยชีวิตขั้นพื้นฐาน",sub:"Basic First Aid and Basic Life Support (CPR)",items:K.map(function(k){return{q:k[0],o:k[1].slice(),a:k[2],e:k[3]||""}}),cfg:{sq:false,so:false,n:0,rk:true}};SNAP[EX.id]=clone(EX);js("fa_exam",EX);js("fa_snaps",SNAP)}
+var ARC={},RES=[],EX=jl("fa_exam",null),DEF={sq:false,so:false,n:0,rk:true};
+function seed(){EX={id:"",title:"แบบทดสอบการปฐมพยาบาลเบื้องต้นและการช่วยชีวิตขั้นพื้นฐาน",sub:"Basic First Aid and Basic Life Support (CPR)",items:K.map(function(k){return{q:k[0],o:k[1].slice(),a:k[2],e:k[3]||""}}),cfg:clone(DEF)};js("fa_exam",EX)}
 if(!EX||!EX.items)seed();
-if(!EX.cfg)EX.cfg={sq:false,so:false,n:0,rk:true};
-function load(){return jl("fa_subs",[])}
-function save(a){js("fa_subs",a)}
-function getEx(r){if(r.eid&&SNAP[r.eid])return SNAP[r.eid];if(!r.eid&&r.a.length===EX.items.length)return EX;return null}
+if(!EX.cfg)EX.cfg=clone(DEF);
+function getEx(r){return ARC[r.eid]||null}
 function sc(r){var e=getEx(r);if(!e)return null;var s=0;r.a.forEach(function(x,i){if(e.items[i]&&x===e.items[i].a)s++});return s}
 function tot(r){var e=getEx(r);return e?r.a.filter(function(x){return x!==-2}).length:0}
 function fmt(t){var d=new Date(t);return isNaN(d)?"":d.toLocaleString("th-TH",{dateStyle:"short",timeStyle:"short"})}
-function valid(r){return r&&r.id&&typeof r.n==="string"&&Array.isArray(r.a)}
-function merge(list){var all=load(),ids={},n=0;all.forEach(function(r){ids[r.id]=1});
- list.forEach(function(r){if(valid(r)&&!ids[r.id]){all.push(r);ids[r.id]=1;n++}});save(all);render();return n}
 function say(t){$("msg").textContent=t}
 function tab(n){$("pe").style.display=n==1?"block":"none";$("pr").style.display=n==2?"block":"none";$("t1").className=n==1?"":"sec";$("t2").className=n==2?"":"sec"}
-$("t1").onclick=function(){tab(1)};$("t2").onclick=function(){tab(2);render()};
-$("in").onclick=function(){if($("pw").value===ADMIN_PASS){$("login").style.display="none";$("app").style.display="block";ed();render();tab(1)}else $("lerr").textContent="รหัสผ่านไม่ถูกต้อง"};
+$("t1").onclick=function(){tab(1)};$("t2").onclick=function(){tab(2);refresh()};
+$("in").onclick=function(){if($("pw").value===ADMIN_PASS){$("login").style.display="none";$("app").style.display="block";ed();tab(1);refresh()}else $("lerr").textContent="รหัสผ่านไม่ถูกต้อง"};
 $("pw").onkeydown=function(e){if(e.key==="Enter")$("in").click()};
 $("out").onclick=function(){$("app").style.display="none";$("login").style.display="block";$("pw").value="";$("lerr").textContent=""};
-$("fi").onchange=function(e){var fs=[].slice.call(e.target.files),n=0,left=fs.length,bad=0;
- fs.forEach(function(f){var rd=new FileReader();rd.onload=function(){try{var j=JSON.parse(rd.result);n+=merge(Array.isArray(j)?j:[j])}catch(x){bad++}if(--left===0){say("นำเข้า "+n+" รายการ"+(bad?" · อ่านไม่ได้ "+bad+" ไฟล์":""));e.target.value=""}};rd.readAsText(f)})};
-$("im").onclick=function(){var n=0,bad=0;$("cd").value.split(/\s+/).filter(Boolean).forEach(function(c){try{n+=merge([JSON.parse(decodeURIComponent(escape(atob(c))))])}catch(x){bad++}});say("นำเข้า "+n+" รายการ"+(bad?" · รหัสผิดรูปแบบ "+bad+" รายการ":""));$("cd").value=""};
-$("clr").onclick=function(){if(confirm("ล้างผลสอบทั้งหมดในเบราว์เซอร์นี้? การกระทำนี้ย้อนกลับไม่ได้")){save([]);render()}};
-$("csv").onclick=function(){var all=load();if(!all.length){say("ยังไม่มีข้อมูล");return}
+
+/* ---------- ฐานข้อมูล: ผลสอบ ---------- */
+function refresh(){say("กำลังโหลด...");
+ return Promise.all([api("GET","/results"),api("GET","/archive")]).then(function(v){
+  RES=v[0]?Object.keys(v[0]).map(function(k){var r=v[0][k];r.id=r.id||k;r.a=r.a||[];return r}):[];ARC=v[1]||{};
+  render();say("อัปเดตล่าสุด "+new Date().toLocaleTimeString("th-TH")+" · "+RES.length+" รายการ")
+ }).catch(function(e){say("เชื่อมต่อฐานข้อมูลไม่สำเร็จ ("+e.message+") ตรวจสอบอินเทอร์เน็ตและ Rules ของ Firebase")})}
+$("rf").onclick=refresh;
+setInterval(function(){if($("app").style.display==="block"&&$("pr").style.display==="block"&&!document.querySelector(".dr"))refresh()},60000);
+$("clr").onclick=function(){if(confirm("ลบผลสอบทั้งหมดในฐานข้อมูล? การกระทำนี้ย้อนกลับไม่ได้"))api("DELETE","/results").then(refresh).catch(function(e){say("ลบไม่สำเร็จ ("+e.message+")")})};
+$("csv").onclick=function(){var all=RES;if(!all.length){say("ยังไม่มีข้อมูล");return}
  var mx=0;all.forEach(function(r){if(r.a.length>mx)mx=r.a.length});
  var h=["ชื่อ-สกุล","แผนก","ประเภท","คะแนน","คะแนนเต็ม","เปอร์เซ็นต์","เวลาส่ง"];for(var i=0;i<mx;i++)h.push("ข้อ"+(i+1));
  var rows=[h].concat(all.map(function(r){var s=sc(r),t=tot(r);return[r.n,r.d,r.m,s==null?"":s,t||"",s==null?"":Math.round(s/t*100),r.t].concat(r.a.map(function(x){return x===-2?"":x<0?"-":LET.charAt(x)}))}));
  dl("exam-results.csv","\ufeff"+rows.map(function(r){return r.map(function(c){return '"'+String(c==null?"":c).replace(/"/g,'""')+'"'}).join(",")}).join("\r\n"),"text/csv;charset=utf-8")};
 function avg(l){return l.length?(l.reduce(function(a,b){return a+b},0)/l.length).toFixed(1):"-"}
 function render(){
- var all=load().sort(function(a,b){return a.t<b.t?1:-1}),pre=[],post=[];
+ var all=RES.slice().sort(function(a,b){return a.t<b.t?1:-1}),pre=[],post=[];
  all.forEach(function(r){var s=sc(r);if(s!=null)(r.m==="ก่อนอบรม"?pre:post).push(s)});
  $("st").innerHTML='<div><b>'+all.length+'</b><span>ผู้ส่งทั้งหมด</span></div><div><b>'+avg(pre)+'</b><span>คะแนนเฉลี่ย ก่อนอบรม ('+pre.length+' คน)</span></div><div><b>'+avg(post)+'</b><span>คะแนนเฉลี่ย หลังอบรม ('+post.length+' คน)</span></div>';
  var h="<tr><th>ชื่อ - สกุล</th><th>แผนก</th><th>ประเภท</th><th>คะแนน</th><th>%</th><th>เวลาส่ง</th><th></th></tr>";
- if(!all.length)h+='<tr><td colspan="7" class="note">ยังไม่มีผลสอบ นำเข้าไฟล์หรือรหัสจากผู้สอบด้านบน</td></tr>';
+ if(!all.length)h+='<tr><td colspan="7" class="note">ยังไม่มีผลสอบในฐานข้อมูล</td></tr>';
  all.forEach(function(r){var s=sc(r),t=tot(r);h+="<tr><td>"+esc(r.n)+"</td><td>"+esc(r.d)+"</td><td>"+esc(r.m)+"</td><td>"+(s==null?'<span class="note">ไม่พบชุดข้อสอบ</span>':"<b>"+s+"/"+t+"</b>")+"</td><td>"+(s==null?"":Math.round(s/t*100)+"%")+"</td><td>"+fmt(r.t)+'</td><td><button class="sec" data-v="'+esc(r.id)+'">ตรวจรายข้อ</button> <button class="del" data-x="'+esc(r.id)+'" aria-label="ลบ">ลบ</button></td></tr>'});
  $("tb").innerHTML=h;
  var g={};all.slice().reverse().forEach(function(r){var s=sc(r);if(s==null)return;var k=r.n.trim().toLowerCase();g[k]=g[k]||{n:r.n,d:r.d};g[k][r.m]=s});
@@ -167,17 +165,20 @@ function render(){
  Object.keys(g).forEach(function(k){var x=g[k];if(x["ก่อนอบรม"]!=null&&x["หลังอบรม"]!=null){c++;var d=x["หลังอบรม"]-x["ก่อนอบรม"];p+="<tr><td>"+esc(x.n)+"</td><td>"+esc(x.d)+"</td><td>"+x["ก่อนอบรม"]+"</td><td>"+x["หลังอบรม"]+'</td><td class="'+(d>0?"pos":d<0?"neg":"")+'">'+(d>0?"+":"")+d+"</td></tr>"}});
  if(!c)p+='<tr><td colspan="5" class="note">ยังไม่มีผู้ที่ทำครบทั้งก่อนและหลังอบรม (จับคู่จากชื่อ - สกุล)</td></tr>';
  $("pp").innerHTML=p;
- var base=SNAP[EX.id]||EX,rs=all.filter(function(r){return r.eid===EX.id||(!r.eid&&r.a.length===base.items.length)}),ia="";
- base.items.forEach(function(it,i){var rr=rs.filter(function(r){return r.a[i]!==-2}),ok=rr.filter(function(r){return r.a[i]===it.a}).length,pc=rr.length?Math.round(ok/rr.length*100):0;ia+='<div class="ib"><span class="t" title="'+esc(it.q)+'">'+(i+1)+". "+esc(it.q)+'</span><span class="b"><i style="width:'+pc+'%"></i></span><span class="p">'+pc+"%</span></div>"});
- $("ia").innerHTML=ia+'<p class="note">คำนวณจากผู้สอบ '+rs.length+" คน ในชุดข้อสอบที่ส่งออกล่าสุด</p>";
+ var base=ARC[EX.id],ia="";
+ if(base){var rs=all.filter(function(r){return r.eid===EX.id});
+  base.items.forEach(function(it,i){var rr=rs.filter(function(r){return r.a[i]!==-2}),ok=rr.filter(function(r){return r.a[i]===it.a}).length,pc=rr.length?Math.round(ok/rr.length*100):0;ia+='<div class="ib"><span class="t" title="'+esc(it.q)+'">'+(i+1)+". "+esc(it.q)+'</span><span class="b"><i style="width:'+pc+'%"></i></span><span class="p">'+pc+"%</span></div>"});
+  ia+='<p class="note">คำนวณจากผู้สอบ '+rs.length+" คน ในชุดข้อสอบที่เผยแพร่ล่าสุด</p>"}
+ else ia='<p class="note">ยังไม่มีข้อสอบที่เผยแพร่จากหน้านี้</p>';
+ $("ia").innerHTML=ia;
 }
 $("tb").onclick=function(e){var v=e.target.getAttribute("data-v"),x=e.target.getAttribute("data-x");
- if(x){if(confirm("ลบผลสอบรายการนี้?")){save(load().filter(function(r){return r.id!==x}));render()}return}
+ if(x){if(confirm("ลบผลสอบรายการนี้?"))api("DELETE","/results/"+x).then(refresh).catch(function(er){say("ลบไม่สำเร็จ ("+er.message+")")});return}
  if(!v)return;var row=e.target.closest("tr"),nx=row.nextElementSibling;
  if(nx&&nx.className==="dr"){nx.remove();return}
- var r=load().filter(function(r){return r.id===v})[0],ex=r&&getEx(r);if(!r)return;
+ var r=RES.filter(function(r){return r.id===v})[0],ex=r&&getEx(r);if(!r)return;
  var h="";
- if(!ex)h='<p class="bad">ไม่พบชุดข้อสอบที่ตรงกับผลนี้ (อาจส่งมาจากข้อสอบที่สร้างในเครื่องอื่น)</p>';
+ if(!ex)h='<p class="bad">ไม่พบชุดข้อสอบที่ตรงกับผลนี้ในฐานข้อมูล</p>';
  else ex.items.forEach(function(k,i){var a=r.a[i],ok=a===k.a;if(a===-2)return;h+='<div class="dq"><b>'+(i+1)+". "+esc(k.q)+"</b><br>คำตอบผู้สอบ: "+(a==null||a<0?"ไม่ได้ตอบ":LET.charAt(a)+". "+esc(k.o[a]))+' <span class="'+(ok?"ok":"bad")+'">'+(ok?"✓ ถูก":"✗ ผิด")+"</span>"+(ok?"":"<br>เฉลย: "+LET.charAt(k.a)+". "+esc(k.o[k.a]))+(k.e?'<br><span class="note">'+esc(k.e)+"</span>":"")+"</div>"});
  var tr=document.createElement("tr");tr.className="dr";tr.innerHTML='<td colspan="7" class="det">'+h+"</td>";row.after(tr)};
 
@@ -187,7 +188,7 @@ function ed(){
  var h="";EX.items.forEach(function(it,i){
   h+='<div class="card qe" data-i="'+i+'"><span class="mv"><button class="sec" data-a="up" aria-label="เลื่อนขึ้น">▲</button><button class="sec" data-a="dn" aria-label="เลื่อนลง">▼</button><button class="del" data-a="rm">ลบข้อ</button></span><b>ข้อ '+(i+1)+'</b><textarea data-f="q" aria-label="โจทย์ข้อ '+(i+1)+'">'+esc(it.q)+"</textarea>";
   it.o.forEach(function(o,k){h+='<div class="op"><input type="radio" name="c'+i+'" data-f="a" data-k="'+k+'"'+(it.a===k?" checked":"")+' aria-label="ตั้งเป็นคำตอบที่ถูก"><span>'+LET.charAt(k)+'.</span><input type="text" data-f="o" data-k="'+k+'" value="'+esc(o)+'" aria-label="ตัวเลือก '+LET.charAt(k)+'">'+(it.o.length>2?'<button class="del" data-a="ro" data-k="'+k+'" aria-label="ลบตัวเลือก">✕</button>':"")+"</div>"});
-  h+=(it.o.length<6?'<button class="sec" data-a="ao">+ เพิ่มตัวเลือก</button> ':"")+'<input type="text" class="ex" data-f="e" placeholder="คำอธิบายเฉลย (ไม่บังคับ แสดงเฉพาะหลังบ้าน)" value="'+esc(it.e||"")+'" aria-label="คำอธิบายเฉลย"></div>'});
+  h+=(it.o.length<6?'<button class="sec" data-a="ao">+ เพิ่มตัวเลือก</button> ':"")+'<input type="text" class="ex" data-f="e" placeholder="คำอธิบายเฉลย (ไม่บังคับ)" value="'+esc(it.e||"")+'" aria-label="คำอธิบายเฉลย"></div>'});
  $("el").innerHTML=h||'<p class="note">ยังไม่มีข้อสอบ กด “+ เพิ่มข้อสอบ”</p>';
  $("cnt").textContent=EX.items.length+" ข้อ";
 }
@@ -211,18 +212,29 @@ function check(){if(!EX.title.trim())return"กรุณาตั้งชื่
  for(var i=0;i<EX.items.length;i++){var it=EX.items[i],n="ข้อ "+(i+1)+": ";if(!it.q.trim())return n+"ยังไม่ได้ใส่โจทย์";
   for(var k=0;k<it.o.length;k++)if(!it.o[k].trim())return n+"ตัวเลือก "+LET.charAt(k)+" ยังว่าง (ลบตัวเลือกที่ไม่ใช้)";
   if(it.a<0||it.a>=it.o.length)return n+"ยังไม่ได้เลือกคำตอบที่ถูก"}return""}
-$("xp").onclick=function(){var bad=check();if(bad){alert(bad);return}
- EX.id=Date.now().toString(36);SNAP[EX.id]=clone(EX);js("fa_exam",EX);js("fa_snaps",SNAP);
- dl("exam.html",buildExam(EX),"text/html;charset=utf-8");$("xm").textContent="สร้างไฟล์ exam.html แล้ว ("+EX.items.length+" ข้อ) นำไปแจกผู้สอบได้เลย"};
+$("pb").onclick=function(){var bad=check();if(bad){alert(bad);return}
+ if(!confirm("เผยแพร่ข้อสอบ “"+EX.title+"” ("+EX.items.length+" ข้อ) ผู้สอบจะเห็นข้อสอบนี้ทันที?"))return;
+ var full=clone(EX);full.id=Date.now().toString(36);
+ var pub={id:full.id,title:full.title,sub:full.sub,cfg:full.cfg,items:full.items.map(function(i){return{q:i.q,o:i.o}})};
+ $("xm").textContent="กำลังเผยแพร่...";
+ api("PUT","/archive/"+full.id,full).then(function(){return api("PUT","/exams/current",pub)}).then(function(){
+  EX.id=full.id;js("fa_exam",EX);ARC[full.id]=full;$("xm").textContent="เผยแพร่แล้ว ("+full.items.length+" ข้อ) ผู้สอบที่เปิดหน้า exam.html จะเห็นข้อสอบนี้ทันที"
+ }).catch(function(e){$("xm").textContent="เผยแพร่ไม่สำเร็จ ("+e.message+") ตรวจสอบอินเทอร์เน็ตและ Rules ของ Firebase"})};
+$("pl").onclick=function(){$("xm").textContent="กำลังดึงข้อมูล...";
+ api("GET","/exams/current").then(function(c){if(!c||!c.id)throw new Error("ยังไม่มีข้อสอบที่เผยแพร่");return api("GET","/archive/"+c.id)}).then(function(f){
+  if(!f||!f.items)throw new Error("ไม่พบข้อมูลข้อสอบ");if(!confirm("แทนที่ข้อสอบที่กำลังแก้อยู่ด้วยข้อสอบที่เผยแพร่ล่าสุด?")){$("xm").textContent="";return}
+  f.items.forEach(function(it){it.e=it.e||""});f.cfg=f.cfg||clone(DEF);EX=f;js("fa_exam",EX);ed();$("xm").textContent="ดึงข้อสอบแล้ว"
+ }).catch(function(e){$("xm").textContent="ดึงไม่สำเร็จ ("+e.message+")"})};
+$("xp").onclick=function(){dl("exam.html",TPL.replace("__DB__",function(){return DB}),"text/html;charset=utf-8")};
 $("sj").onclick=function(){dl("exam-set.json",JSON.stringify(EX,null,1),"application/json")};
 $("oj").onchange=function(e){var f=e.target.files[0];if(!f)return;var rd=new FileReader();
  rd.onload=function(){try{var j=JSON.parse(rd.result);if(!j||!Array.isArray(j.items))throw 0;
   j.items.forEach(function(it){if(typeof it.q!=="string"||!Array.isArray(it.o)||typeof it.a!=="number")throw 0;it.e=it.e||""});
   if(!confirm("แทนที่ข้อสอบที่กำลังแก้อยู่ด้วยไฟล์นี้?"))return;
-  EX={id:"",title:j.title||"",sub:j.sub||"",items:j.items,cfg:j.cfg||{sq:false,so:false,n:0,rk:true}};js("fa_exam",EX);ed()}catch(x){alert("ไฟล์ชุดข้อสอบไม่ถูกต้อง")}e.target.value=""};rd.readAsText(f)};
+  EX={id:"",title:j.title||"",sub:j.sub||"",items:j.items,cfg:j.cfg||clone(DEF)};js("fa_exam",EX);ed()}catch(x){alert("ไฟล์ชุดข้อสอบไม่ถูกต้อง")}e.target.value=""};rd.readAsText(f)};
 $("sd").onclick=function(){if(confirm("แทนที่ข้อสอบที่กำลังแก้อยู่ด้วยข้อสอบตัวอย่าง (ปฐมพยาบาล 20 ข้อ)?")){seed();ed()}};
 
-/* ---------- แม่แบบหน้าผู้สอบ (ไม่มีเฉลย) ---------- */
+/* ---------- หน้าผู้สอบ (โหลดข้อสอบและส่งผลผ่านฐานข้อมูล) ---------- */
 var TPL=`<!DOCTYPE html>
 <html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>แบบทดสอบ</title>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;800&display=swap" rel="stylesheet">
@@ -242,7 +254,7 @@ h1{font-size:clamp(23px,6vw,34px);line-height:1.25;font-weight:800;margin:0}
 fieldset{border:1px solid var(--line);background:var(--card);border-radius:6px;padding:14px 16px;margin:20px 0 0}
 legend{font-weight:600;padding:0 6px}
 .row{display:flex;gap:12px;flex-wrap:wrap}.row label{flex:1 1 220px;font-size:15px;color:var(--mute)}
-input[type=text],textarea{width:100%;font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink)}
+input[type=text]{width:100%;font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink)}
 .mode{display:flex;gap:10px;margin-top:10px}
 .mode label{flex:1;text-align:center;padding:8px;border:2px solid var(--line);border-radius:6px;cursor:pointer;font-weight:600}
 .mode input{position:absolute;opacity:0}
@@ -256,78 +268,74 @@ input[type=text],textarea{width:100%;font:inherit;padding:8px 10px;border:1px so
 .o:focus-within{outline:3px solid var(--ink);outline-offset:1px}
 .bar{position:sticky;bottom:0;background:var(--bg);padding:12px 0 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 button{font:600 17px "Sarabun",sans-serif;padding:10px 22px;border:0;background:var(--red);color:#fff;border-radius:6px;cursor:pointer}
-button.sec{background:transparent;color:var(--ink);border:2px solid var(--line)}
+button:disabled{opacity:.6;cursor:wait}
 button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .dq{padding:10px 0;border-top:1px dashed var(--line)}.ok{color:var(--g);font-weight:600}.bad{color:var(--red);font-weight:600}#rv h2{font-size:22px;margin:18px 0 4px}
 #done{display:none;background:var(--card);border:2px solid var(--red);border-radius:6px;padding:18px;margin:20px 0}
-#done h2{margin:0 0 6px}textarea{height:90px;font-size:13px;word-break:break-all}
-#err{color:var(--red);font-weight:600}
+#done h2{margin:0 0 6px}#err{color:var(--red);font-weight:600}#ld{margin:24px 0;color:var(--mute)}
 </style></head><body>
-<header><div class="cross" aria-hidden="true"></div><div><h1 id="h"></h1><p class="sub" id="sb"></p></div></header>
+<header><div class="cross" aria-hidden="true"></div><div><h1 id="h">แบบทดสอบ</h1><p class="sub" id="sb"></p></div></header>
 <main>
-<div id="form">
+<p id="ld" role="status">กำลังโหลดข้อสอบ...</p>
+<div id="form" style="display:none">
 <fieldset><legend>ข้อมูลผู้ทำแบบทดสอบ</legend>
 <div class="row"><label>ชื่อ - สกุล (จำเป็น)<input type="text" id="nm" autocomplete="name"></label><label>ฝ่าย/แผนก/สังกัด<input type="text" id="dp"></label></div>
 <div class="mode" role="radiogroup" aria-label="ประเภทแบบทดสอบ"><label><input type="radio" name="mode" value="ก่อนอบรม" checked>ก่อนอบรม</label><label><input type="radio" name="mode" value="หลังอบรม">หลังอบรม</label></div>
 </fieldset>
-<p class="sub" style="margin-top:16px">เลือกคำตอบที่ถูกต้องที่สุดเพียงข้อเดียว เมื่อเสร็จแล้วกด “ส่งคำตอบ” ผู้ดูแลจะเป็นผู้ตรวจและแจ้งคะแนน</p>
+<p class="sub" style="margin-top:16px">เลือกคำตอบที่ถูกต้องที่สุดเพียงข้อเดียว เมื่อเสร็จแล้วกด “ส่งคำตอบ”</p>
 <div id="list"></div>
 <div class="bar"><button id="go">ส่งคำตอบ</button><span id="err" role="alert"></span></div>
 </div>
-<div id="done" role="status"><h2>ส่งคำตอบเรียบร้อยแล้ว</h2>
-<p>ผู้ดูแลจะตรวจและแจ้งคะแนนให้ทราบ หากผู้ดูแลอยู่คนละเครื่อง ให้ส่งไฟล์ผลหรือรหัสด้านล่างให้ผู้ดูแล</p>
-<p><button id="dl">ดาวน์โหลดไฟล์ผล</button> <button id="cp" class="sec">คัดลอกรหัส</button></p>
-<textarea id="code" readonly aria-label="รหัสผลสอบ"></textarea><div id="rv"></div></div>
+<div id="done" role="status"><h2>ส่งคำตอบเรียบร้อยแล้ว</h2><p id="dm">ผู้ดูแลจะตรวจและแจ้งคะแนนให้ทราบ</p><div id="rv"></div></div>
 </main>
 <script>
-var EX=__DATA__;var KEY="__KEY__";
-var LET="กขคงจฉ",L=document.getElementById("list"),rec=null;
+var DB="__DB__",LET="กขคงจฉ",L=document.getElementById("list"),EX=null,CF={},ord=[],rec=null;
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
-var CF=EX.cfg||{};
+function api(m,p,b){var o={method:m};if(b!==undefined)o.body=JSON.stringify(b);return fetch(DB+p+".json",o).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()})}
 function shuf(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
-var ord=EX.items.map(function(_,i){return i});
-if(CF.n&&CF.n<ord.length){ord=shuf(ord).slice(0,CF.n);if(!CF.sq)ord.sort(function(a,b){return a-b})}
-if(CF.sq)shuf(ord);
-document.title=EX.title;document.getElementById("h").textContent=EX.title;
-document.getElementById("sb").textContent=(EX.sub?EX.sub+" · ":"")+ord.length+" ข้อ";
-ord.forEach(function(i,p){
- var d=EX.items[i],q=document.createElement("section");q.className="q";q.id="q"+i;
- var os=d.o.map(function(_,j){return j});if(CF.so)shuf(os);
- var h="<h2>"+(p+1)+". "+esc(d.q)+"</h2>";
- os.forEach(function(j,k){h+='<label class="o"><input type="radio" name="q'+i+'" value="'+j+'"><span>'+LET.charAt(k)+". "+esc(d.o[j])+"</span></label>"});
- q.innerHTML=h;L.appendChild(q);
-});
+function ld(t){document.getElementById("ld").textContent=t}
+api("GET","/exams/current").then(function(x){if(!x||!x.items){ld("ยังไม่มีข้อสอบที่เผยแพร่ กรุณาติดต่อผู้ดูแล");return}init(x)}).catch(function(){ld("โหลดข้อสอบไม่สำเร็จ ตรวจสอบอินเทอร์เน็ตแล้วรีเฟรชหน้านี้")});
+function init(x){
+ EX=x;CF=x.cfg||{};
+ ord=EX.items.map(function(_,i){return i});
+ if(CF.n&&CF.n<ord.length){ord=shuf(ord).slice(0,CF.n);if(!CF.sq)ord.sort(function(a,b){return a-b})}
+ if(CF.sq)shuf(ord);
+ document.title=EX.title;document.getElementById("h").textContent=EX.title;
+ document.getElementById("sb").textContent=(EX.sub?EX.sub+" · ":"")+ord.length+" ข้อ";
+ ord.forEach(function(i,p){
+  var d=EX.items[i],q=document.createElement("section");q.className="q";q.id="q"+i;
+  var os=d.o.map(function(_,j){return j});if(CF.so)shuf(os);
+  var h="<h2>"+(p+1)+". "+esc(d.q)+"</h2>";
+  os.forEach(function(j,k){h+='<label class="o"><input type="radio" name="q'+i+'" value="'+j+'"><span>'+LET.charAt(k)+". "+esc(d.o[j])+"</span></label>"});
+  q.innerHTML=h;L.appendChild(q);
+ });
+ document.getElementById("ld").style.display="none";document.getElementById("form").style.display="block";
+}
 document.getElementById("go").onclick=function(){
- var nm=document.getElementById("nm").value.trim(),err=document.getElementById("err");
+ var nm=document.getElementById("nm").value.trim(),err=document.getElementById("err"),b=this;
  if(!nm){err.textContent="กรุณากรอกชื่อ - สกุล";document.getElementById("nm").focus();return}
  var a=EX.items.map(function(){return -2}),miss=[],first=null;
  ord.forEach(function(i,p){var c=document.querySelector("input[name=q"+i+"]:checked");a[i]=c?+c.value:-1;document.getElementById("q"+i).classList.toggle("miss",!c);if(!c){miss.push(p+1);if(first==null)first=i}});
  if(miss.length){err.textContent="ยังไม่ได้ตอบข้อ "+miss.join(", ");document.getElementById("q"+first).scrollIntoView({behavior:"smooth",block:"center"});return}
- err.textContent="";
- rec={id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),eid:EX.id,n:nm,d:document.getElementById("dp").value.trim(),m:document.querySelector("input[name=mode]:checked").value,a:a,t:new Date().toISOString()};
- try{var all=JSON.parse(localStorage.getItem("fa_subs")||"[]");all.push(rec);localStorage.setItem("fa_subs",JSON.stringify(all))}catch(e){}
- document.getElementById("code").value=btoa(unescape(encodeURIComponent(JSON.stringify(rec))));
- document.getElementById("form").style.display="none";
- document.getElementById("done").style.display="block";
- if(rec.m==="หลังอบรม"&&KEY){try{review()}catch(e){}}
- window.scrollTo(0,0);
+ rec={id:rec?rec.id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),eid:EX.id,n:nm,d:document.getElementById("dp").value.trim(),m:document.querySelector("input[name=mode]:checked").value,a:a,t:new Date().toISOString()};
+ b.disabled=true;err.textContent="กำลังส่ง...";
+ api("PUT","/results/"+rec.id,rec).then(finish).catch(function(){b.disabled=false;err.textContent="ส่งไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ตแล้วกด “ส่งคำตอบ” อีกครั้ง"});
 };
-function review(){var K=JSON.parse(decodeURIComponent(escape(atob(KEY)))),s=0,h="";
- ord.forEach(function(i,p){var d=EX.items[i],a=rec.a[i],ok=a===K[i][0];if(ok)s++;
-  h+='<div class="dq"><b>'+(p+1)+". "+esc(d.q)+"</b><br>คำตอบของคุณ: "+(a<0?"ไม่ได้ตอบ":esc(d.o[a]))+' <span class="'+(ok?"ok":"bad")+'">'+(ok?"✓ ถูก":"✗ ผิด")+"</span>"+(ok?"":"<br>เฉลย: "+esc(d.o[K[i][0]]))+(K[i][1]?'<br><span class="sub">'+esc(K[i][1])+"</span>":"")+"</div>"});
- document.getElementById("rv").innerHTML='<h2>คะแนนของคุณ '+s+' / '+ord.length+'</h2><p class="sub">เฉลยรายข้อ</p>'+h}
-document.getElementById("dl").onclick=function(){
- var u=URL.createObjectURL(new Blob([JSON.stringify(rec)],{type:"application/json"})),a=document.createElement("a");
- a.href=u;a.download="result-"+rec.id+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},1000);
-};
-document.getElementById("cp").onclick=function(){var t=document.getElementById("code");t.select();try{navigator.clipboard.writeText(t.value)}catch(e){document.execCommand("copy")}this.textContent="คัดลอกแล้ว"};
-<\/script></body></html>`;
-function buildExam(ex){
- var pub={id:ex.id,title:ex.title,sub:ex.sub,items:ex.items.map(function(i){return{q:i.q,o:i.o}}),cfg:ex.cfg||{}};
- var data=JSON.stringify(pub).replace(/</g,"\\u003c");
- var key=ex.cfg&&ex.cfg.rk===false?"":btoa(unescape(encodeURIComponent(JSON.stringify(ex.items.map(function(i){return[i.a,i.e||""]})))));
- return TPL.replace("__DATA__",function(){return data}).replace("__KEY__",function(){return key});
+function finish(){
+ document.getElementById("form").style.display="none";document.getElementById("done").style.display="block";window.scrollTo(0,0);
+ if(rec.m==="หลังอบรม"&&CF.rk!==false){
+  document.getElementById("dm").textContent="กำลังโหลดเฉลย...";
+  api("GET","/archive/"+EX.id).then(review).catch(function(){document.getElementById("dm").textContent="โหลดเฉลยไม่สำเร็จ ผู้ดูแลจะแจ้งคะแนนให้ทราบ"});
+ }
 }
+function review(F){
+ var s=0,h="";
+ ord.forEach(function(i,p){var d=EX.items[i],k=F.items[i],a=rec.a[i],ok=a===k.a;if(ok)s++;
+  h+='<div class="dq"><b>'+(p+1)+". "+esc(d.q)+"</b><br>คำตอบของคุณ: "+(a<0?"ไม่ได้ตอบ":esc(d.o[a]))+' <span class="'+(ok?"ok":"bad")+'">'+(ok?"✓ ถูก":"✗ ผิด")+"</span>"+(ok?"":"<br>เฉลย: "+esc(d.o[k.a]))+(k.e?'<br><span class="sub">'+esc(k.e)+"</span>":"")+"</div>"});
+ document.getElementById("dm").textContent="ผู้ดูแลจะตรวจและบันทึกคะแนนของคุณเช่นกัน";
+ document.getElementById("rv").innerHTML='<h2>คะแนนของคุณ '+s+' / '+ord.length+'</h2><p class="sub">เฉลยรายข้อ</p>'+h;
+}
+<\/script></body></html>`;
 </script>
 </body>
 </html>
