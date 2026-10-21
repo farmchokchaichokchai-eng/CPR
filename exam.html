@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>แบบทดสอบการปฐมพยาบาลเบื้องต้น (ผู้สอบ)</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6f6;--card:#fff;--ink:#16252b;--mute:#566a72;--line:#d3dde0;--red:#c62828;--rbg:#fde4e2;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10191d;--card:#18262b;--ink:#e9f1f3;--mute:#9db3ba;--line:#2d4249;--red:#ef5350;--rbg:#41201d;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#10191d;--card:#18262b;--ink:#e9f1f3;--mute:#9db3ba;--line:#2d4249;--red:#ef5350;--rbg:#41201d;color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.7 "Sarabun",system-ui,sans-serif}
+header,main{max-width:720px;margin:0 auto;padding:0 18px}
+header{padding-top:28px;display:flex;gap:16px;align-items:center}
+.cross{flex:none;width:56px;height:56px;border-radius:8px;background:var(--red);position:relative}
+.cross::before,.cross::after{content:"";position:absolute;background:#fff;border-radius:2px}
+.cross::before{left:23px;top:11px;width:10px;height:34px}.cross::after{left:11px;top:23px;width:34px;height:10px}
+h1{font-size:clamp(23px,6vw,34px);line-height:1.25;font-weight:800;margin:0}
+.sub{color:var(--mute);margin:2px 0 0;font-size:15px}
+fieldset{border:1px solid var(--line);background:var(--card);border-radius:6px;padding:14px 16px;margin:20px 0 0}
+legend{font-weight:600;padding:0 6px}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.row label{flex:1 1 220px;font-size:15px;color:var(--mute)}
+input[type=text],textarea{width:100%;font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink)}
+.mode{display:flex;gap:10px;margin-top:10px}
+.mode label{flex:1;text-align:center;padding:8px;border:2px solid var(--line);border-radius:6px;cursor:pointer;font-weight:600}
+.mode input{position:absolute;opacity:0}
+.mode label:has(input:checked){border-color:var(--red);background:var(--rbg)}
+.mode label:has(input:focus-visible){outline:3px solid var(--ink)}
+.q{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--line);border-radius:6px;padding:16px 16px 10px;margin:16px 0}
+.q.miss{border-left-color:var(--red)}
+.q h2{font-size:18px;font-weight:600;margin:0 0 8px;line-height:1.5}
+.o{display:flex;gap:10px;align-items:flex-start;padding:7px 10px;margin:4px 0;border:1px solid var(--line);border-radius:4px;cursor:pointer}
+.o:hover{border-color:var(--red)}.o input{margin-top:7px;accent-color:var(--red)}
+.o:focus-within{outline:3px solid var(--ink);outline-offset:1px}
+.bar{position:sticky;bottom:0;background:var(--bg);padding:12px 0 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+button{font:600 17px "Sarabun",sans-serif;padding:10px 22px;border:0;background:var(--red);color:#fff;border-radius:6px;cursor:pointer}
+button.sec{background:transparent;color:var(--ink);border:2px solid var(--line)}
+button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+#done{display:none;background:var(--card);border:2px solid var(--red);border-radius:6px;padding:18px;margin:20px 0}
+#done h2{margin:0 0 6px}textarea{height:90px;font-size:13px;word-break:break-all}
+#err{color:var(--red);font-weight:600}
+</style>
+</head>
+<body>
+<header>
+<div class="cross" aria-hidden="true"></div>
+<div><h1>แบบทดสอบการปฐมพยาบาลเบื้องต้น<br>และการช่วยชีวิตขั้นพื้นฐาน</h1>
+<p class="sub">Basic First Aid and Basic Life Support (CPR) · 20 ข้อ</p></div>
+</header>
+<main>
+<div id="form">
+<fieldset>
+<legend>ข้อมูลผู้ทำแบบทดสอบ</legend>
+<div class="row">
+<label>ชื่อ - สกุล (จำเป็น)<input type="text" id="nm" autocomplete="name"></label>
+<label>ฝ่าย/แผนก/สังกัด<input type="text" id="dp"></label>
+</div>
+<div class="mode" role="radiogroup" aria-label="ประเภทแบบทดสอบ">
+<label><input type="radio" name="mode" value="ก่อนอบรม" checked>ก่อนอบรม</label>
+<label><input type="radio" name="mode" value="หลังอบรม">หลังอบรม</label>
+</div>
+</fieldset>
+<p class="sub" style="margin-top:16px">เลือกคำตอบที่ถูกต้องที่สุดเพียงข้อเดียว เมื่อเสร็จแล้วกด “ส่งคำตอบ” ผู้ดูแลจะเป็นผู้ตรวจและแจ้งคะแนน</p>
+<div id="list"></div>
+<div class="bar"><button id="go">ส่งคำตอบ</button><span id="err" role="alert"></span></div>
+</div>
+<div id="done" role="status">
+<h2>ส่งคำตอบเรียบร้อยแล้ว</h2>
+<p>ผู้ดูแลจะตรวจและแจ้งคะแนนให้ทราบ หากผู้ดูแลอยู่คนละเครื่อง ให้ส่งไฟล์ผลหรือรหัสด้านล่างให้ผู้ดูแล</p>
+<p><button id="dl">ดาวน์โหลดไฟล์ผล</button> <button id="cp" class="sec">คัดลอกรหัส</button></p>
+<textarea id="code" readonly aria-label="รหัสผลสอบ"></textarea>
+</div>
+</main>
+<script>
+var Q=[
+["หากมีผู้บาดเจ็บเลือดออกมาก ควรทำอย่างไรเป็นอันดับแรก",["ล้างบาดแผลด้วยน้ำสะอาด","กดแผลเพื่อห้ามเลือด","พาไปหาหมอทันที","ใช้น้ำแข็งประคบ"]],
+["เมื่อพบผู้หมดสติ ควรตรวจอะไรเป็นอันดับแรก",["การหายใจและชีพจร","แผลหรือบาดแผล","เสื้อผ้าเปื้อนเลือด","อุณหภูมิร่างกาย"]],
+["วิธีการปฐมพยาบาลเบื้องต้นสำหรับผู้ถูกไฟฟ้าช็อตคือ",["แตะตัวผู้บาดเจ็บทันที","ตัดแหล่งไฟฟ้าก่อนแล้วค่อยช่วย","ราดน้ำเย็นทันที","ทำ CPR ทันที"]],
+["อาการของผู้แพ้รุนแรง (Anaphylaxis) คืออะไร",["มีผื่นแดงทั่วร่างกาย, หายใจลำบาก","มีไข้สูง, ไอมาก","ปวดท้อง, ท้องเสีย","ตัวสั่น, หนาวสั่น"]],
+["การปฐมพยาบาลสำหรับแผลไฟไหม้น้ำร้อนลวก ควรทำอย่างไร",["ทาแผลด้วยยาฆ่าเชื้อทันที","ราดน้ำสะอาดเย็น หรือน้ำอุณหภูมิปกติ 10–20 นาที","เจาะแผลเพื่อระบายความร้อน","ปิดแผลด้วยผ้าหนา"]],
+["หากพบผู้มีอาการช็อกจากความร้อน (Heat Stroke) ควรทำอย่างไร",["ให้ดื่มน้ำเยอะ ๆ","พาไปที่ร่มและทำให้เย็นลง","ทำ CPR ทันที","นอนพักเฉย ๆ"]],
+["วิธีปฐมพยาบาลสำหรับเลือดกำเดาไหลคือ",["นั่งตัวตรง ก้มศีรษะไปด้านหลัง","นั่งตัวตรง ก้มศีรษะไปด้านหน้า กดจมูก","นอนราบ กดจมูก","ดันจมูกแรง ๆ"]],
+["การช่วยชีวิตขั้นพื้นฐาน (CPR) สำหรับผู้ใหญ่ ต้องทำอย่างไร",["กดหน้าอกลึก 2 นิ้ว (≈5 ซม.) ความเร็ว 100–120 ครั้ง/นาที","กดหน้าอกลึก 5–6 ซม. ความเร็ว 60 ครั้ง/นาที","กดหน้าอกลึก 10 ซม. ความเร็ว 80 ครั้ง/นาที","กดหน้าอกลึก 1 นิ้ว ความเร็ว 50 ครั้ง/นาที"]],
+["การปฐมพยาบาลสำหรับกระดูกหักคือ",["ขยับกระดูกกลับเข้าที่ทันที","ดามกระดูกและประคบเย็น","นวดบริเวณกระดูก","วางผู้บาดเจ็บนอนราบเฉย ๆ"]],
+["หากผู้บาดเจ็บสำลักอาหารควรทำอย่างไร",["ใช้มือหยิบอาหารออกจากปาก","ทำท่าฮีมลิก (Heimlich maneuver)","ปล่อยให้ไอออกเอง","ให้ดื่มน้ำเยอะ ๆ"]],
+["วิธีปฐมพยาบาลสำหรับถูกงูกัดคือ",["รีบดูดพิษออกด้วยปาก","ทำให้บาดแผลสูงกว่าระดับหัวใจ, พักนิ่ง ๆ","ถอดเสื้อผ้าออกทั้งหมด","ประคบด้วยน้ำร้อน"]],
+["หากผู้บาดเจ็บเป็นลมหมดสติแต่ยังหายใจปกติ ควรทำอย่างไร",["ทำ CPR","นอนราบยกขา 30 ซม.","ปล่อยให้ลุกขึ้นเอง","กดจมูกแรง ๆ"]],
+["การปฐมพยาบาลสำหรับผู้มีอาการเจ็บหน้าอกอย่างเฉียบพลัน คือ",["ให้นอนพักเฉย ๆ","โทรเรียกรถพยาบาลทันที","ให้ดื่มน้ำเย็น","นวดหน้าอก"]],
+["การช่วยผู้ป่วยสำลักน้ำ (Near drowning) ต้องทำอย่างไร",["ทำ CPR ทันทีหากไม่หายใจ","ปล่อยให้พักในน้ำ","เช็ดตัวให้แห้ง","ให้ดื่มน้ำมาก ๆ"]],
+["การปฐมพยาบาลสำหรับตาเข้าฝุ่นหรือเศษผงคือ",["ขยี้ตาแรง ๆ","ล้างด้วยน้ำสะอาด","ปิดตาไว้เฉย ๆ","ใช้นิ้วเอาออก"]],
+["การปฐมพยาบาลสำหรับผู้มีไข้สูงและชัก ควรทำอย่างไร",["หยุดชักด้วยการจับแขนขาแรง ๆ","วางผู้ป่วยในท่าปลอดภัยและเช็ดตัว","ป้อนยาลดไข้ทางปากทันที","ปล่อยให้ชักจนหยุดเอง"]],
+["วิธีปฐมพยาบาลสำหรับผู้มีอาการตาแดงหรือแพ้ตา คือ",["ใช้น้ำยาล้างตา","ปิดตาและพักสายตา","ขยี้ตาแรง ๆ","ใช้น้ำร้อนประคบ"]],
+["การปฐมพยาบาลสำหรับผู้ถูกแมลงกัดคือ",["บีบหรือเกาแผลแรง ๆ","ล้างด้วยน้ำสบู่และประคบเย็น","ทายาแรง ๆ","ปล่อยไว้เฉย ๆ"]],
+["การปฐมพยาบาลสำหรับผู้มีบาดแผลใหญ่และเลือดไหลไม่หยุด ควรทำอย่างไร",["กดแผลและยกเหนือหัวใจ","ใช้น้ำร้อนราด","ปล่อยให้เลือดไหลตามธรรมชาติ","นวดแผล"]],
+["การปฐมพยาบาลสำหรับผู้มีอาการหายใจติดขัดจากโรคหืด คือ",["ทำให้สงบและใช้ยาพ่น (inhaler)","ทำ CPR ทันที","ให้ดื่มน้ำเยอะ ๆ","ปล่อยให้พักเฉย ๆ"]]
+];
+var L=document.getElementById("list"),LET="กขคง",rec=null;
+Q.forEach(function(d,i){
+ var q=document.createElement("section");q.className="q";q.id="q"+i;
+ var h="<h2>"+(i+1)+". "+d[0]+"</h2>";
+ d[1].forEach(function(t,j){h+='<label class="o"><input type="radio" name="q'+i+'" value="'+j+'"><span>'+LET.charAt(j)+". "+t+"</span></label>"});
+ q.innerHTML=h;L.appendChild(q);
+});
+document.getElementById("go").onclick=function(){
+ var nm=document.getElementById("nm").value.trim(),err=document.getElementById("err");
+ if(!nm){err.textContent="กรุณากรอกชื่อ - สกุล";document.getElementById("nm").focus();return}
+ var a=[],miss=[];
+ Q.forEach(function(_,i){var c=document.querySelector("input[name=q"+i+"]:checked");a.push(c?+c.value:-1);var s=document.getElementById("q"+i);s.classList.toggle("miss",!c);if(!c)miss.push(i+1)});
+ if(miss.length){err.textContent="ยังไม่ได้ตอบข้อ "+miss.join(", ");document.getElementById("q"+(miss[0]-1)).scrollIntoView({behavior:"smooth",block:"center"});return}
+ err.textContent="";
+ rec={id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),n:nm,d:document.getElementById("dp").value.trim(),m:document.querySelector("input[name=mode]:checked").value,a:a,t:new Date().toISOString()};
+ try{var all=JSON.parse(localStorage.getItem("fa_subs")||"[]");all.push(rec);localStorage.setItem("fa_subs",JSON.stringify(all))}catch(e){}
+ document.getElementById("code").value=btoa(unescape(encodeURIComponent(JSON.stringify(rec))));
+ document.getElementById("form").style.display="none";
+ document.getElementById("done").style.display="block";window.scrollTo(0,0);
+};
+document.getElementById("dl").onclick=function(){
+ var b=new Blob([JSON.stringify(rec)],{type:"application/json"}),u=URL.createObjectURL(b),a=document.createElement("a");
+ a.href=u;a.download="result-"+rec.id+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},1000);
+};
+document.getElementById("cp").onclick=function(){var t=document.getElementById("code");t.select();try{navigator.clipboard.writeText(t.value)}catch(e){document.execCommand("copy")}this.textContent="คัดลอกแล้ว"};
+</script>
+</body>
+</html>
