@@ -34,12 +34,14 @@ button{font:600 17px "Sarabun",sans-serif;padding:10px 22px;border:0;background:
 button:disabled{opacity:.6;cursor:wait}
 button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .dq{padding:10px 0;border-top:1px dashed var(--line)}.ok{color:var(--g);font-weight:600}.bad{color:var(--red);font-weight:600}#rv h2{font-size:22px;margin:18px 0 4px}
+.sj{display:block;width:100%;text-align:left;margin:10px 0;padding:14px 16px;font-size:18px}.sj small{font-weight:400;opacity:.9}
 #done{display:none;background:var(--card);border:2px solid var(--red);border-radius:6px;padding:18px;margin:20px 0}
 #done h2{margin:0 0 6px}#err{color:var(--red);font-weight:600}#ld{margin:24px 0;color:var(--mute)}
 </style></head><body>
 <header><div class="cross" aria-hidden="true"></div><div><h1 id="h">แบบทดสอบ</h1><p class="sub" id="sb"></p></div></header>
 <main>
 <p id="ld" role="status">กำลังโหลดข้อสอบ...</p>
+<div id="pick" style="display:none"></div>
 <div id="form" style="display:none">
 <fieldset><legend>ข้อมูลผู้ทำแบบทดสอบ</legend>
 <div class="row"><label>ชื่อ - สกุล (จำเป็น)<input type="text" id="nm" autocomplete="name"></label><label>ฝ่าย/แผนก/สังกัด<input type="text" id="dp"></label></div>
@@ -57,7 +59,21 @@ function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;
 function api(m,p,b){var o={method:m};if(b!==undefined)o.body=JSON.stringify(b);return fetch(DB+p+".json",o).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()})}
 function shuf(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
 function ld(t){document.getElementById("ld").textContent=t}
-api("GET","/exams/current").then(function(x){if(!x||!x.items){ld("ยังไม่มีข้อสอบที่เผยแพร่ กรุณาติดต่อผู้ดูแล");return}init(x)}).catch(function(){ld("โหลดข้อสอบไม่สำเร็จ ตรวจสอบอินเทอร์เน็ตแล้วรีเฟรชหน้านี้")});
+api("GET","/subjects").then(function(o){
+ var ks=o?Object.keys(o).filter(function(k){return o[k]&&o[k].items}):[];
+ if(!ks.length){ld("ยังไม่มีข้อสอบที่เผยแพร่ กรุณาติดต่อผู้ดูแล");return}
+ var want=decodeURIComponent(location.hash.slice(1));
+ if(want&&o[want]&&o[want].items){init(o[want]);return}
+ if(ks.length===1){init(o[ks[0]]);return}
+ menu(o,ks);
+}).catch(function(e){var m=String(e&&e.message||e);ld("โหลดข้อสอบไม่สำเร็จ ("+m+") "+(/40[13]/.test(m)?"ฐานข้อมูลไม่อนุญาตให้อ่านข้อมูล ผู้ดูแลต้องตั้ง Rules ของ Firebase ให้อ่านได้":/404/.test(m)?"ไม่พบฐานข้อมูล ตรวจสอบลิงก์ Firebase":"ตรวจสอบอินเทอร์เน็ต หรือเปิดหน้านี้ด้วยเบราว์เซอร์หลัก (Chrome/Safari) แล้วรีเฟรช"))});
+function menu(o,ks){
+ var h='<h2 style="font-size:20px;margin:24px 0 4px">เลือกวิชาที่ต้องการสอบ</h2>';
+ ks.forEach(function(k){h+='<button class="sj" data-k="'+esc(k)+'">'+esc(o[k].title)+'<br><small>'+esc(o[k].sub||"")+(o[k].sub?" · ":"")+(CFN(o[k]))+' ข้อ</small></button>'});
+ var p=document.getElementById("pick");p.innerHTML=h;p.style.display="block";document.getElementById("ld").style.display="none";
+ p.onclick=function(e){var b=e.target.closest(".sj");if(!b)return;p.style.display="none";init(o[b.getAttribute("data-k")])};
+}
+function CFN(x){var n=x.items.length,c=x.cfg&&x.cfg.n;return c&&c<n?c:n}
 function init(x){
  EX=x;CF=x.cfg||{};
  ord=EX.items.map(function(_,i){return i});
@@ -80,7 +96,7 @@ document.getElementById("go").onclick=function(){
  var a=EX.items.map(function(){return -2}),miss=[],first=null;
  ord.forEach(function(i,p){var c=document.querySelector("input[name=q"+i+"]:checked");a[i]=c?+c.value:-1;document.getElementById("q"+i).classList.toggle("miss",!c);if(!c){miss.push(p+1);if(first==null)first=i}});
  if(miss.length){err.textContent="ยังไม่ได้ตอบข้อ "+miss.join(", ");document.getElementById("q"+first).scrollIntoView({behavior:"smooth",block:"center"});return}
- rec={id:rec?rec.id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),eid:EX.id,n:nm,d:document.getElementById("dp").value.trim(),m:document.querySelector("input[name=mode]:checked").value,a:a,t:new Date().toISOString()};
+ rec={id:rec?rec.id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),eid:EX.id,sid:EX.sid||"",n:nm,d:document.getElementById("dp").value.trim(),m:document.querySelector("input[name=mode]:checked").value,a:a,t:new Date().toISOString()};
  b.disabled=true;err.textContent="กำลังส่ง...";
  api("PUT","/results/"+rec.id,rec).then(finish).catch(function(){b.disabled=false;err.textContent="ส่งไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ตแล้วกด “ส่งคำตอบ” อีกครั้ง"});
 };
