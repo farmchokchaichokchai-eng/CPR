@@ -6,83 +6,161 @@
 <title>หลังบ้าน – สร้างข้อสอบและตรวจผล</title>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f1f4f5;--card:#fff;--ink:#16252b;--mute:#566a72;--line:#d3dde0;--navy:#1f3a4d;--red:#c62828;--green:#12714a;--gbg:#dff3e7;--rbg:#fde4e2;--on:#fff;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f171b;--card:#17252b;--ink:#e9f1f3;--mute:#9db3ba;--line:#2d4249;--navy:#5aa0c8;--red:#ef5350;--green:#4cc88a;--gbg:#173a29;--rbg:#41201d;--on:#0f171b;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0f171b;--card:#17252b;--ink:#e9f1f3;--mute:#9db3ba;--line:#2d4249;--navy:#5aa0c8;--red:#ef5350;--green:#4cc88a;--gbg:#173a29;--rbg:#41201d;--on:#0f171b;color-scheme:dark}
+:root{--bg:#eef3f2;--card:#fff;--ink:#13242b;--mute:#5b6f77;--line:#dbe4e6;--soft:#f4f8f8;--pri:#0e7c86;--prih:#0a6169;--on:#fff;--red:#c62828;--rbg:#fde7e5;--green:#12714a;--gbg:#dff3e7;--amb:#8a5a00;--abg:#fff0cc;--side:#12303a;--sidet:#cfe3e6;--sh:0 1px 2px rgba(19,36,43,.06),0 6px 20px rgba(19,36,43,.06);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0c1418;--card:#15232a;--ink:#e8f1f3;--mute:#9bb2b9;--line:#26393f;--soft:#101c21;--pri:#3fb6c1;--prih:#5fcad4;--on:#06181b;--red:#ef5350;--rbg:#3d1f1d;--green:#4cc88a;--gbg:#15382a;--amb:#f2c35c;--abg:#3a2f12;--side:#0a1c22;--sidet:#b9d0d4;--sh:0 1px 2px rgba(0,0,0,.4);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0c1418;--card:#15232a;--ink:#e8f1f3;--mute:#9bb2b9;--line:#26393f;--soft:#101c21;--pri:#3fb6c1;--prih:#5fcad4;--on:#06181b;--red:#ef5350;--rbg:#3d1f1d;--green:#4cc88a;--gbg:#15382a;--amb:#f2c35c;--abg:#3a2f12;--side:#0a1c22;--sidet:#b9d0d4;--sh:0 1px 2px rgba(0,0,0,.4);color-scheme:dark}
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.6 "Sarabun",system-ui,sans-serif}
-.wrap{max-width:1000px;margin:0 auto;padding:18px}
-h1{font-size:26px;font-weight:800;margin:0}h2{font-size:19px;margin:26px 0 8px}
-.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:4px solid var(--navy);padding-bottom:10px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:14px 16px;margin:12px 0}
-button,.btn{font:600 15px "Sarabun",sans-serif;padding:8px 16px;border:0;background:var(--navy);color:var(--on);border-radius:6px;cursor:pointer;display:inline-block}
-button.sec{background:transparent;color:var(--ink);border:2px solid var(--line)}button.del{background:transparent;color:var(--red);border:2px solid var(--line);padding:4px 10px}
-button:focus-visible,input:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
-input[type=password],textarea{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink)}
-textarea{width:100%;height:80px;font-size:13px}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
-.stats div{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 14px}
-.stats b{display:block;font-size:26px;font-weight:800}.stats span{color:var(--mute);font-size:14px}
-.scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;background:var(--card);font-size:15px}
-th,td{border-bottom:1px solid var(--line);padding:7px 10px;text-align:left;white-space:nowrap}th{background:var(--bg);font-weight:600}
-.pos{color:var(--green);font-weight:600}.neg{color:var(--red);font-weight:600}
-.det{white-space:normal;background:var(--bg)}
-.dq{padding:8px 4px;border-bottom:1px dashed var(--line)}
-.ok{color:var(--green);font-weight:600}.bad{color:var(--red);font-weight:600}
-.note{color:var(--mute);font-size:14px}
-.ib{display:flex;align-items:center;gap:10px;padding:3px 0}.ib .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ib .b{width:140px;height:10px;background:var(--line);border-radius:5px;overflow:hidden;flex:none}.ib .b i{display:block;height:100%;background:var(--green)}
-.ib .p{width:48px;text-align:right;flex:none}
-#msg,#xm{color:var(--green);font-weight:600}
-input[type=text]{font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);width:100%}
-.tabs{display:flex;gap:8px;margin:14px 0 0}
-.qe textarea{height:66px;margin:8px 0}.op{display:flex;gap:8px;align-items:center;margin:4px 0}.op span{width:22px}
-.op input[type=radio]{accent-color:var(--green);width:18px;height:18px}.ex{margin-top:8px}
-.mv{float:right;display:flex;gap:6px}.fl{display:block;font-size:14px;color:var(--mute);margin:8px 0}
-.bar{position:sticky;bottom:0;background:var(--bg);padding:10px 0 14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button,.btn{font:600 15px "Sarabun",sans-serif;padding:9px 18px;border:2px solid var(--pri);background:var(--pri);color:var(--on);border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .15s,border-color .15s}
+button:hover,.btn:hover{background:var(--prih);border-color:var(--prih)}
+button.sec,.btn.sec{background:transparent;color:var(--ink);border-color:var(--line)}
+button.sec:hover,.btn.sec:hover{border-color:var(--pri);background:var(--soft)}
+button.del{background:transparent;color:var(--red);border:2px solid var(--line);padding:5px 12px;border-radius:8px}
+button.del:hover{background:var(--rbg);border-color:var(--red)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,.btn:focus-within{outline:3px solid var(--pri);outline-offset:2px}
+input[type=text],input[type=password],input[type=number],textarea,select{font:inherit;padding:9px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--soft);color:var(--ink);width:100%}
+input:focus,textarea:focus,select:focus{border-color:var(--pri);background:var(--card)}
+textarea{height:84px;resize:vertical}
+h2{font-size:18px;font-weight:800;margin:30px 0 10px;display:flex;align-items:center;gap:10px}
+h2::before{content:"";width:5px;height:20px;border-radius:3px;background:var(--red)}
+.note{color:var(--mute);font-size:14px}.bad{color:var(--red);font-weight:600}.ok{color:var(--green);font-weight:600}
+/* login */
+.lg{min-height:100vh;display:grid;place-items:center;padding:20px}
+.lc{width:100%;max-width:390px;background:var(--card);border-radius:20px;box-shadow:var(--sh);padding:34px 30px;text-align:center;border-top:6px solid var(--red)}
+.logo{width:64px;height:64px;border-radius:16px;background:var(--red);position:relative;margin:0 auto 14px}
+.logo::before,.logo::after{content:"";position:absolute;background:#fff;border-radius:3px}
+.logo::before{left:26px;top:12px;width:12px;height:40px}.logo::after{left:12px;top:26px;width:40px;height:12px}
+.lc h1{font-size:24px;font-weight:800;margin:0}.lc p{margin:6px 0 18px;color:var(--mute)}
+.lc input{text-align:center;font-size:18px;margin-bottom:12px}.lc button{width:100%;justify-content:center;padding:11px}
+/* shell */
+.shell{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+.side{background:var(--side);color:var(--sidet);padding:22px 16px;display:flex;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:12px;padding:0 6px 18px;margin-bottom:8px;border-bottom:1px solid rgba(255,255,255,.12)}
+.brand .logo{width:42px;height:42px;margin:0;border-radius:11px}.brand .logo::before{left:17px;top:8px;width:8px;height:26px}.brand .logo::after{left:8px;top:17px;width:26px;height:8px}
+.brand b{display:block;color:#fff;font-size:17px;line-height:1.2}.brand span{font-size:13px;opacity:.75}
+.nav{display:flex;flex-direction:column;gap:6px}
+.nav button{background:transparent;border:0;color:var(--sidet);justify-content:flex-start;padding:11px 14px;border-radius:10px;font-size:16px;width:100%}
+.nav button:hover{background:rgba(255,255,255,.08);color:#fff}
+.nav button:not(.sec){background:#fff;color:#12303a}
+.nav button:not(.sec):hover{background:#fff;color:#12303a}
+.side .out{margin-top:auto}.side .out button{width:100%;background:transparent;border:1.5px solid rgba(255,255,255,.25);color:var(--sidet);justify-content:center}
+.side .out button:hover{background:rgba(255,255,255,.08)}
+.main{padding:28px clamp(16px,4vw,44px) 110px;max-width:1120px;width:100%}
+.ph h1{font-size:28px;font-weight:800;margin:0}.ph p{margin:2px 0 0;color:var(--mute)}
+.card{background:var(--card);border-radius:16px;box-shadow:var(--sh);padding:18px 20px;margin:12px 0;border:1px solid var(--line)}
+.fl{display:block;font-size:14px;color:var(--mute);font-weight:600;margin:10px 0 4px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+/* switches */
+.sws{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:6px}
+.sw{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--soft);cursor:pointer;color:var(--ink);font-size:15px;margin:0;font-weight:400}
+.sw small{display:block;color:var(--mute);font-size:13px;line-height:1.4;margin-top:2px}
+.sw input{appearance:none;-webkit-appearance:none;flex:none;width:44px;height:26px;border-radius:13px;background:var(--line);position:relative;cursor:pointer;margin:2px 0 0;transition:background .15s;padding:0;border:0}
+.sw input::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .15s}
+.sw input:checked{background:var(--pri)}.sw input:checked::after{transform:translateX(18px)}
+.sw:has(input:checked){border-color:var(--pri);background:var(--card)}
+.sw b{display:block;font-weight:600}
+/* question cards */
+.qe{position:relative;padding-top:16px;border-left:6px solid var(--pri)}
+.no{display:inline-grid;place-items:center;min-width:34px;height:34px;padding:0 8px;border-radius:10px;background:var(--pri);color:var(--on);font-weight:800;margin-bottom:6px}
+.mv{position:absolute;right:14px;top:14px;display:flex;gap:6px}
+.mv button{padding:4px 10px;border-radius:8px}
+.qe textarea{height:70px;margin:4px 0 10px}
+.op{display:flex;gap:10px;align-items:center;margin:6px 0;padding:6px 10px;border:1.5px solid var(--line);border-radius:12px;background:var(--soft)}
+.op.on{border-color:var(--green);background:var(--gbg)}
+.op span{width:22px;font-weight:700;color:var(--mute)}.op.on span{color:var(--green)}
+.op input[type=radio]{accent-color:var(--green);width:20px;height:20px;flex:none;margin:0;padding:0}
+.op input[type=text]{border:0;background:transparent;padding:6px 4px}
+.ex{margin-top:10px;font-size:14px}
+.addq{width:100%;justify-content:center;border-style:dashed;padding:14px;margin:8px 0}
+/* floating action bar */
+.bar{position:fixed;left:calc(250px + clamp(16px,4vw,44px));right:clamp(16px,4vw,44px);bottom:14px;max-width:1032px;background:var(--card);border:1px solid var(--line);box-shadow:0 8px 30px rgba(19,36,43,.18);border-radius:16px;padding:10px 14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;z-index:5}
+.bar #pb{padding:10px 22px;font-size:16px}
+#msg,#xm{color:var(--green);font-weight:600;font-size:14px}
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.stats div{background:var(--card);border-radius:16px;box-shadow:var(--sh);border:1px solid var(--line);padding:16px 18px;border-top:5px solid var(--pri)}
+.stats div:nth-child(2){border-top-color:#e0a100}.stats div:nth-child(3){border-top-color:var(--green)}
+.stats b{display:block;font-size:34px;font-weight:800;line-height:1.1}.stats span{color:var(--mute);font-size:14px}
+/* tables */
+.scroll{overflow-x:auto;border-radius:16px;border:1px solid var(--line);background:var(--card);box-shadow:var(--sh)}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{padding:10px 14px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--line)}
+th{background:var(--soft);font-weight:700;color:var(--mute);font-size:13px;position:sticky;top:0}
+tbody tr:hover,tr:hover>td{background:var(--soft)}
+tr:last-child>td{border-bottom:0}
+.bd{display:inline-block;padding:2px 12px;border-radius:20px;font-size:13px;font-weight:700}
+.bd.pre{background:var(--abg);color:var(--amb)}.bd.post{background:var(--gbg);color:var(--green)}
+.pill{display:inline-block;min-width:58px;text-align:center;padding:2px 10px;border-radius:8px;font-weight:800}
+.pill.hi{background:var(--gbg);color:var(--green)}.pill.mid{background:var(--abg);color:var(--amb)}.pill.lo{background:var(--rbg);color:var(--red)}
+.pos{color:var(--green);font-weight:700}.neg{color:var(--red);font-weight:700}
+td button{padding:4px 12px;font-size:14px;border-radius:8px}
+.det{white-space:normal;background:var(--soft)!important;padding:8px 18px}
+.dq{padding:10px 2px;border-bottom:1px dashed var(--line)}.dq:last-child{border:0}
+.ib{display:flex;align-items:center;gap:12px;padding:5px 0}.ib .t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ib .b{width:160px;height:12px;background:var(--line);border-radius:6px;overflow:hidden;flex:none}.ib .b i{display:block;height:100%;background:linear-gradient(90deg,var(--pri),var(--green));border-radius:6px}
+.ib .p{width:50px;text-align:right;flex:none;font-weight:700}
+.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:4px 0 12px}
+.tools select{width:auto;min-width:230px}
+@media (max-width:820px){
+ .shell{grid-template-columns:1fr}
+ .side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;padding:12px 14px;gap:8px}
+ .brand{border:0;margin:0;padding:0;flex:1 1 100%}.nav{flex-direction:row;flex:1}.nav button{justify-content:center}
+ .side .out{margin:0}.side .out button{width:auto}
+ .bar{left:12px;right:12px}.main{padding-bottom:150px}.ib .b{width:90px}.mv{position:static;margin-bottom:6px}
+}
 </style>
 </head>
 <body>
-<div class="wrap" id="login">
-<h1>หลังบ้าน · ตรวจแบบทดสอบ</h1>
-<div class="card"><p>กรอกรหัสผ่านผู้ดูแล</p>
-<p><input type="password" id="pw" aria-label="รหัสผ่าน" autocomplete="current-password"> <button id="in">เข้าสู่ระบบ</button></p>
-<p id="lerr" class="bad" role="alert"></p></div>
-</div>
-<div class="wrap" id="app" style="display:none">
-<div class="top"><h1>หลังบ้าน · สร้างข้อสอบและตรวจผล</h1><button class="sec" id="out">ออกจากระบบ</button></div>
+<div id="login"><div class="lg"><div class="lc">
+<div class="logo" aria-hidden="true"></div>
+<h1>หลังบ้านระบบข้อสอบ</h1><p>สำหรับผู้ดูแล · กรอกรหัสผ่านเพื่อเข้าสู่ระบบ</p>
+<input type="password" id="pw" aria-label="รหัสผ่าน" placeholder="รหัสผ่าน" autocomplete="current-password">
+<button id="in">เข้าสู่ระบบ</button>
+<p id="lerr" class="bad" role="alert" style="margin:12px 0 0"></p>
+</div></div></div>
 
-<div class="tabs"><button id="t1">สร้าง/แก้ข้อสอบ</button><button id="t2" class="sec">ผลสอบ</button></div>
+<div id="app" style="display:none"><div class="shell">
+<aside class="side">
+<div class="brand"><div class="logo" aria-hidden="true"></div><div><b>หลังบ้าน</b><span>สร้างข้อสอบและตรวจผล</span></div></div>
+<nav class="nav"><button id="t1">✎ สร้าง/แก้ข้อสอบ</button><button id="t2" class="sec">▤ ผลสอบ</button></nav>
+<div class="out"><button id="out">ออกจากระบบ</button></div>
+</aside>
+<main class="main">
+
 <div id="pe">
+<div class="ph"><h1>สร้าง/แก้ข้อสอบ</h1><p>จัดการแต่ละวิชา แล้วกดเผยแพร่ให้ผู้สอบเห็นทันที</p></div>
 <h2>วิชา / ข้อสอบ <span class="note" id="cnt"></span></h2>
-<div class="card"><label class="fl">เลือกวิชาที่ต้องการแก้ไข<select id="sj" style="width:100%;font:inherit;padding:8px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink)"></select></label>
-<p><button id="ns">+ วิชาใหม่</button> <button class="del" id="ds">ลบวิชานี้</button></p>
-<p class="note" style="margin:0">ลิงก์ตรงเข้าวิชานี้: ต่อท้ายที่อยู่ของ exam.html ด้วย <b id="lk"></b> ถ้าไม่ใส่ ผู้สอบจะเลือกวิชาเองในหน้าสอบ</p></div>
 <div class="card">
-<label class="fl">ชื่อวิชา / ชื่อข้อสอบ<input type="text" id="et"></label>
-<label class="fl">คำอธิบายใต้ชื่อ (ไม่บังคับ)<input type="text" id="es"></label>
-<p class="note">พิมพ์โจทย์และตัวเลือก ติ๊กวงกลมหน้าตัวเลือกที่เป็นคำตอบที่ถูก เมื่อเสร็จให้กด “เผยแพร่ข้อสอบ” ผู้สอบที่เปิดหน้า exam.html จะเห็นวิชานี้ทันที (ไม่ต้องแจกไฟล์ใหม่ ไฟล์ exam.html ใช้ซ้ำได้ทุกวิชา) ฉบับร่างบันทึกในเบราว์เซอร์นี้อัตโนมัติ</p>
-<div style="margin-top:10px"><b>ตัวเลือกการสุ่ม</b>
-<label class="fl" style="color:var(--ink)"><input type="checkbox" id="c1"> สุ่มลำดับข้อ (ผู้สอบแต่ละคนได้ลำดับต่างกัน)</label>
-<label class="fl" style="color:var(--ink)"><input type="checkbox" id="c2"> สุ่มลำดับตัวเลือก (ไม่ควรใช้ถ้ามีตัวเลือกแนว “ถูกทุกข้อ”)</label>
-<label class="fl" style="color:var(--ink)"><input type="checkbox" id="c4"> แสดงเฉลยและคะแนนให้ผู้สอบดูหลังส่ง เมื่อเลือกโหมด “หลังอบรม” (ก่อนอบรมจะไม่แสดง)</label>
-<p class="note" style="margin:0 0 6px">เฉลยเก็บในฐานข้อมูลและหน้าผู้สอบจะโหลดมาแสดงหลังส่งแบบ “หลังอบรม” เท่านั้น แต่ผู้ที่รู้วิธีเรียกฐานข้อมูลโดยตรงอาจเห็นเฉลยได้ ถ้าต้องการปิดสนิท ให้ปิดข้อนี้</p>
-<label class="fl">สุ่มเลือกมาออกสอบกี่ข้อจากทั้งหมด (เว้นว่าง = ออกทุกข้อ) <input type="number" id="c3" min="1" style="width:110px;margin-left:8px;padding:6px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);font:inherit"></label></div>
+<label class="fl" for="sj">เลือกวิชาที่ต้องการแก้ไข</label>
+<select id="sj"></select>
+<div class="row" style="margin-top:12px"><button id="ns">+ วิชาใหม่</button><button class="del" id="ds">ลบวิชานี้</button></div>
+<p class="note" style="margin:12px 0 0">ลิงก์ตรงเข้าวิชานี้: ต่อท้ายที่อยู่ของ exam.html ด้วย <b id="lk"></b> ถ้าไม่ใส่ ผู้สอบจะเลือกวิชาเองในหน้าสอบ</p>
+</div>
+<div class="card">
+<label class="fl" for="et">ชื่อวิชา / ชื่อข้อสอบ</label><input type="text" id="et">
+<label class="fl" for="es">คำอธิบายใต้ชื่อ (ไม่บังคับ)</label><input type="text" id="es">
+<p class="note" style="margin:12px 0 0">พิมพ์โจทย์และตัวเลือก ติ๊กวงกลมหน้าตัวเลือกที่เป็นคำตอบที่ถูก เมื่อเสร็จกด “เผยแพร่ข้อสอบ” ฉบับร่างบันทึกในเบราว์เซอร์นี้อัตโนมัติ ไฟล์ exam.html ใช้ซ้ำได้ทุกวิชา</p>
+<h2 style="font-size:16px;margin-top:22px">ตัวเลือกการสอบ</h2>
+<div class="sws">
+<label class="sw"><input type="checkbox" id="c1"><span><b>สุ่มลำดับข้อ</b><small>ผู้สอบแต่ละคนได้ลำดับข้อไม่เหมือนกัน</small></span></label>
+<label class="sw"><input type="checkbox" id="c2"><span><b>สุ่มลำดับตัวเลือก</b><small>ไม่ควรใช้ถ้ามีตัวเลือกแนว “ถูกทุกข้อ”</small></span></label>
+<label class="sw"><input type="checkbox" id="c4"><span><b>แสดงเฉลยและคะแนนหลังส่ง</b><small>เฉพาะโหมด “หลังอบรม” เฉลยเก็บในฐานข้อมูล ผู้ที่รู้วิธีเรียกฐานข้อมูลโดยตรงอาจเห็นได้ ปิดถ้าต้องการปิดสนิท</small></span></label>
+</div>
+<label class="fl" for="c3" style="margin-top:16px">สุ่มเลือกมาออกสอบกี่ข้อจากทั้งหมด (เว้นว่าง = ออกทุกข้อ)</label>
+<input type="number" id="c3" min="1" style="max-width:140px">
 </div>
 <div id="el"></div>
-<p><button id="aq">+ เพิ่มข้อสอบ</button></p>
-<div class="bar"><button id="pb">เผยแพร่ข้อสอบ</button><button class="sec" id="pl">ดึงข้อสอบที่เผยแพร่</button><button class="sec" id="xp">ดาวน์โหลด exam.html (หน้าผู้สอบ)</button><button class="sec" id="sj2">บันทึกชุดข้อสอบ (.json)</button><label class="btn sec" style="border:2px solid var(--line);background:transparent;color:var(--ink)">เปิดชุดข้อสอบ<input type="file" id="oj" accept=".json,application/json" style="display:none"></label><button class="sec" id="sd">เพิ่มวิชาตัวอย่าง</button><span id="xm" role="status"></span></div>
+<button class="sec addq" id="aq">+ เพิ่มข้อสอบ</button>
+<div class="bar"><button id="pb">▲ เผยแพร่ข้อสอบ</button><button class="sec" id="pl">ดึงข้อสอบที่เผยแพร่</button><button class="sec" id="xp">ดาวน์โหลด exam.html</button><button class="sec" id="sj2">บันทึก .json</button><label class="btn sec">เปิด .json<input type="file" id="oj" accept=".json,application/json" style="display:none"></label><button class="sec" id="sd">เพิ่มวิชาตัวอย่าง</button><span id="xm" role="status"></span></div>
 </div>
-<div id="pr" style="display:none">
-<h2>ผลสอบ <span class="note">(จากฐานข้อมูล Firebase)</span></h2>
-<p><button id="rf">รีเฟรชข้อมูล</button> <span id="msg" role="status"></span></p>
-<label class="fl">กรองตามวิชา <select id="fs" style="font:inherit;padding:7px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);min-width:220px"></select></label>
 
-<h2>สรุป</h2>
+<div id="pr" style="display:none">
+<div class="ph"><h1>ผลสอบ</h1><p>ข้อมูลจากฐานข้อมูล Firebase อัปเดตอัตโนมัติทุก 1 นาที</p></div>
+<div class="tools" style="margin-top:16px"><select id="fs" aria-label="กรองตามวิชา"></select><button id="rf">↻ รีเฟรช</button><span id="msg" role="status"></span></div>
 <div class="stats" id="st"></div>
 
 <h2>รายชื่อผู้สอบและคะแนน</h2>
-<p><button id="csv">ส่งออก CSV</button> <button class="sec" id="clr">ล้างข้อมูลทั้งหมด</button></p>
+<div class="tools"><button id="csv">⇩ ส่งออก CSV</button><button class="del" id="clr">ล้างข้อมูล</button></div>
 <div class="scroll"><table id="tb"></table></div>
 
 <h2>เทียบก่อน–หลังอบรมรายบุคคล</h2>
@@ -91,7 +169,9 @@ input[type=text]{font:inherit;padding:7px 10px;border:1px solid var(--line);bord
 <h2>อัตราตอบถูกรายข้อ</h2>
 <div class="card" id="ia"></div>
 </div>
-</div>
+
+</main></div></div>
+
 <script>
 var ADMIN_PASS="admin1234"; // เปลี่ยนรหัสผ่านตรงนี้ก่อนนำไปใช้
 var LET="กขคง";
@@ -175,7 +255,7 @@ function render(){
  $("st").innerHTML='<div><b>'+all.length+'</b><span>ผู้ส่งทั้งหมด</span></div><div><b>'+avg(pre)+'</b><span>คะแนนเฉลี่ย ก่อนอบรม ('+pre.length+' คน)</span></div><div><b>'+avg(post)+'</b><span>คะแนนเฉลี่ย หลังอบรม ('+post.length+' คน)</span></div>';
  var h="<tr><th>วิชา</th><th>ชื่อ - สกุล</th><th>แผนก</th><th>ประเภท</th><th>คะแนน</th><th>%</th><th>เวลาส่ง</th><th></th></tr>";
  if(!all.length)h+='<tr><td colspan="8" class="note">ยังไม่มีผลสอบในฐานข้อมูล</td></tr>';
- all.forEach(function(r){var s=sc(r),t=tot(r);h+="<tr><td>"+esc(subjTitle(sidOf(r)))+"</td><td>"+esc(r.n)+"</td><td>"+esc(r.d)+"</td><td>"+esc(r.m)+"</td><td>"+(s==null?'<span class="note">ไม่พบชุดข้อสอบ</span>':"<b>"+s+"/"+t+"</b>")+"</td><td>"+(s==null?"":Math.round(s/t*100)+"%")+"</td><td>"+fmt(r.t)+'</td><td><button class="sec" data-v="'+esc(r.id)+'">ตรวจรายข้อ</button> <button class="del" data-x="'+esc(r.id)+'" aria-label="ลบ">ลบ</button></td></tr>'});
+ all.forEach(function(r){var s=sc(r),t=tot(r);h+="<tr><td>"+esc(subjTitle(sidOf(r)))+"</td><td>"+esc(r.n)+"</td><td>"+esc(r.d)+'</td><td><span class="bd '+(r.m==="ก่อนอบรม"?"pre":"post")+'">'+esc(r.m)+"</span></td><td>"+(s==null?'<span class="note">ไม่พบชุดข้อสอบ</span>':'<span class="pill '+(s/t>=.8?"hi":s/t>=.6?"mid":"lo")+'">'+s+"/"+t+"</span>")+"</td><td>"+(s==null?"":Math.round(s/t*100)+"%")+"</td><td>"+fmt(r.t)+'</td><td><button class="sec" data-v="'+esc(r.id)+'">ตรวจรายข้อ</button> <button class="del" data-x="'+esc(r.id)+'" aria-label="ลบ">ลบ</button></td></tr>'});
  $("tb").innerHTML=h;
  var g={};all.slice().reverse().forEach(function(r){var s=sc(r);if(s==null)return;var k=r.n.trim().toLowerCase()+"|"+sidOf(r);g[k]=g[k]||{n:r.n,d:r.d,v:sidOf(r)};g[k][r.m]=s});
  var p="<tr><th>วิชา</th><th>ชื่อ - สกุล</th><th>แผนก</th><th>ก่อนอบรม</th><th>หลังอบรม</th><th>เปลี่ยนแปลง</th></tr>",c=0;
@@ -213,8 +293,8 @@ $("ds").onclick=function(){if(!confirm("ลบวิชา “"+EX.title+"” �
 function ed(){
  $("et").value=EX.title;$("es").value=EX.sub;$("c4").checked=EX.cfg.rk!==false;$("c1").checked=!!EX.cfg.sq;$("c2").checked=!!EX.cfg.so;$("c3").value=EX.cfg.n||"";$("lk").textContent="#"+EX.sid;fillSj();
  var h="";EX.items.forEach(function(it,i){
-  h+='<div class="card qe" data-i="'+i+'"><span class="mv"><button class="sec" data-a="up" aria-label="เลื่อนขึ้น">▲</button><button class="sec" data-a="dn" aria-label="เลื่อนลง">▼</button><button class="del" data-a="rm">ลบข้อ</button></span><b>ข้อ '+(i+1)+'</b><textarea data-f="q" aria-label="โจทย์ข้อ '+(i+1)+'">'+esc(it.q)+"</textarea>";
-  it.o.forEach(function(o,k){h+='<div class="op"><input type="radio" name="c'+i+'" data-f="a" data-k="'+k+'"'+(it.a===k?" checked":"")+' aria-label="ตั้งเป็นคำตอบที่ถูก"><span>'+LET.charAt(k)+'.</span><input type="text" data-f="o" data-k="'+k+'" value="'+esc(o)+'" aria-label="ตัวเลือก '+LET.charAt(k)+'">'+(it.o.length>2?'<button class="del" data-a="ro" data-k="'+k+'" aria-label="ลบตัวเลือก">✕</button>':"")+"</div>"});
+  h+='<div class="card qe" data-i="'+i+'"><span class="mv"><button class="sec" data-a="up" aria-label="เลื่อนขึ้น">▲</button><button class="sec" data-a="dn" aria-label="เลื่อนลง">▼</button><button class="del" data-a="rm">ลบข้อ</button></span><span class="no">'+(i+1)+'</span><textarea data-f="q" aria-label="โจทย์ข้อ '+(i+1)+'">'+esc(it.q)+"</textarea>";
+  it.o.forEach(function(o,k){h+='<div class="op'+(it.a===k?" on":"")+'"><input type="radio" name="c'+i+'" data-f="a" data-k="'+k+'"'+(it.a===k?" checked":"")+' aria-label="ตั้งเป็นคำตอบที่ถูก"><span>'+LET.charAt(k)+'.</span><input type="text" data-f="o" data-k="'+k+'" value="'+esc(o)+'" aria-label="ตัวเลือก '+LET.charAt(k)+'">'+(it.o.length>2?'<button class="del" data-a="ro" data-k="'+k+'" aria-label="ลบตัวเลือก">✕</button>':"")+"</div>"});
   h+=(it.o.length<6?'<button class="sec" data-a="ao">+ เพิ่มตัวเลือก</button> ':"")+'<input type="text" class="ex" data-f="e" placeholder="คำอธิบายเฉลย (ไม่บังคับ)" value="'+esc(it.e||"")+'" aria-label="คำอธิบายเฉลย"></div>'});
  $("el").innerHTML=h||'<p class="note">ยังไม่มีข้อสอบ กด “+ เพิ่มข้อสอบ”</p>';
  $("cnt").textContent=EX.items.length+" ข้อ";
@@ -224,7 +304,7 @@ $("es").oninput=function(){EX.sub=this.value;sv()};
 function cf(){EX.cfg={sq:$("c1").checked,so:$("c2").checked,n:parseInt($("c3").value,10)||0,rk:$("c4").checked};sv()}
 $("c1").onchange=$("c2").onchange=$("c4").onchange=$("c3").oninput=cf;
 function onEdit(e){var c=e.target.closest(".qe");if(!c)return;var it=EX.items[+c.getAttribute("data-i")],f=e.target.getAttribute("data-f"),k=+e.target.getAttribute("data-k");
- if(f==="q")it.q=e.target.value;else if(f==="o")it.o[k]=e.target.value;else if(f==="e")it.e=e.target.value;else if(f==="a")it.a=k;sv()}
+ if(f==="q")it.q=e.target.value;else if(f==="o")it.o[k]=e.target.value;else if(f==="e")it.e=e.target.value;else if(f==="a"){it.a=k;c.querySelectorAll(".op").forEach(function(d,j){d.classList.toggle("on",j===k)})}sv()}
 $("el").oninput=onEdit;$("el").onchange=onEdit;
 $("el").onclick=function(e){var a=e.target.getAttribute("data-a"),c=e.target.closest(".qe");if(!a||!c)return;
  var i=+c.getAttribute("data-i"),it=EX.items[i],k=+e.target.getAttribute("data-k"),t;
