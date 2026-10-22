@@ -135,6 +135,7 @@ td button{padding:4px 12px;font-size:14px;border-radius:8px}
 <label class="fl" for="sj">เลือกวิชาที่ต้องการแก้ไข</label>
 <select id="sj"></select>
 <div class="row" style="margin-top:12px"><button id="ns">+ วิชาใหม่</button><button class="del" id="ds">ลบวิชานี้</button></div>
+<div id="dp" class="row" style="display:none;margin-top:12px"><span class="dty y" id="dpt"></span><button class="del" id="dd">ลบรายการซ้ำ</button></div>
 <p class="note" style="margin:12px 0 0">ลิงก์ตรงเข้าวิชานี้: ต่อท้ายที่อยู่ของ exam.html ด้วย <b id="lk"></b> ถ้าไม่ใส่ ผู้สอบจะเลือกวิชาเองในหน้าสอบ</p>
 </div>
 <div class="card">
@@ -295,7 +296,19 @@ $("tb").onclick=function(e){var v=e.target.getAttribute("data-v"),x=e.target.get
  var tr=document.createElement("tr");tr.className="dr";tr.innerHTML='<td colspan="8" class="det">'+h+"</td>";row.after(tr)};
 
 /* ---------- วิชา และตัวสร้างข้อสอบ ---------- */
-function fillSj(){var ids={};Object.keys(DR).forEach(function(k){ids[k]=1});Object.keys(SUBJ).forEach(function(k){ids[k]=1});
+function dupes(){var g={},rm=[];
+ Object.keys(SUBJ).forEach(function(k){var x=SUBJ[k];if(!x||!x.items)return;var key=JSON.stringify([x.title,x.sub||"",x.items.map(function(i){return[i.q,i.o]})]);(g[key]=g[key]||[]).push(k)});
+ function cnt(k){return RES.filter(function(r){return sidOf(r)===k}).length}
+ Object.keys(g).forEach(function(key){var a=g[key];if(a.length<2)return;a.sort(function(x,y){return cnt(y)-cnt(x)||(x<y?-1:1)});rm=rm.concat(a.slice(1))});
+ return rm}
+$("dd").onclick=function(){var rm=dupes();if(!rm.length)return;
+ if(!confirm("ลบวิชาที่ซ้ำ "+rm.length+" รายการ? ระบบจะเก็บอันที่มีผลสอบมากที่สุดไว้ และผลสอบที่ส่งมาแล้วจะไม่ถูกลบ"))return;
+ Promise.all(rm.map(function(k){return Promise.all([api("DELETE","/subjects/"+k),api("DELETE","/drafts/"+k)])})).then(function(){
+  rm.forEach(function(k){delete SUBJ[k];delete DR[k]});
+  if(!DR[EX.sid]){var ks=Object.keys(DR);if(ks.length)EX=DR[ks[0]];else{EX=mk("วิชาใหม่","",blank());EX.tmp=true;DR[EX.sid]=EX}}
+  sv();ed();$("xm").textContent="ลบวิชาที่ซ้ำแล้ว "+rm.length+" รายการ";refresh()
+ }).catch(function(e){$("xm").textContent="ลบไม่สำเร็จ ("+e.message+")"})};
+function fillSj(){var dr=dupes();$("dp").style.display=dr.length?"flex":"none";$("dpt").textContent="⚠ พบวิชาที่ซ้ำกัน "+dr.length+" รายการ";var ids={};Object.keys(DR).forEach(function(k){ids[k]=1});Object.keys(SUBJ).forEach(function(k){ids[k]=1});
  var h="";Object.keys(ids).forEach(function(k){h+='<option value="'+esc(k)+'"'+(k===EX.sid?" selected":"")+">"+esc(DR[k]?DR[k].title||"(ยังไม่ตั้งชื่อ)":subjTitle(k))+" #"+k.slice(-4)+(SUBJ[k]?" · เผยแพร่แล้ว":" · ฉบับร่าง (ยังไม่เผยแพร่)")+"</option>"});$("sj").innerHTML=h}
 function fixd(f,k){f.sid=k;f.items.forEach(function(it){it.e=it.e||""});f.cfg=f.cfg||clone(DEF);return f}
 $("sj").onchange=function(){var k=this.value;if(DR[k]){EX=DR[k];sv();ed();return}
@@ -411,7 +424,8 @@ function api(m,p,b){var o={method:m};if(b!==undefined)o.body=JSON.stringify(b);r
 function shuf(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
 function ld(t){document.getElementById("ld").textContent=t}
 api("GET","/subjects").then(function(o){
- var ks=o?Object.keys(o).filter(function(k){return o[k]&&o[k].items}):[];
+ var ks=o?Object.keys(o).filter(function(k){return o[k]&&o[k].items}):[],seen={};
+ ks=ks.filter(function(k){var x=o[k],key=JSON.stringify([x.title,x.sub||"",x.items.map(function(i){return i.q})]);if(seen[key])return false;seen[key]=1;return true});
  if(!ks.length){ld("ยังไม่มีข้อสอบที่เผยแพร่ กรุณาติดต่อผู้ดูแล");return}
  var want=decodeURIComponent(location.hash.slice(1));
  if(want&&o[want]&&o[want].items){init(o[want]);return}
