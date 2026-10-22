@@ -152,7 +152,7 @@ td button{padding:4px 12px;font-size:14px;border-radius:8px}
 </div>
 <div id="el"></div>
 <button class="sec addq" id="aq">+ เพิ่มข้อสอบ</button>
-<div class="bar"><button id="pb">💾 บันทึก</button><span id="dty" class="dty"></span><button class="sec" id="pl">ดึงข้อสอบที่เผยแพร่</button><button class="sec" id="sd">เพิ่มวิชาตัวอย่าง</button><span id="xm" role="status"></span></div>
+<div class="bar"><button class="sec" id="pb">💾 บันทึก</button><button id="pl">▲ เผยแพร่ข้อสอบ</button><span id="dty" class="dty"></span><button class="sec" id="sd">เพิ่มวิชาตัวอย่าง</button><span id="xm" role="status"></span></div>
 </div>
 
 <div id="pr" style="display:none">
@@ -220,8 +220,16 @@ window.onbeforeunload=function(e){if(dirty&&$("app").style.display==="block"){e.
 function sv(){DR[EX.sid]=EX;js("fa_drafts",DR);js("fa_cur",EX.sid);chk()}
 (function(){var old=jl("fa_exam",null);
  if(old&&old.items&&!Object.keys(DR).length){old.sid=old.sid||uid();old.cfg=old.cfg||clone(DEF);DR[old.sid]=old}
- if(!Object.keys(DR).length){var x=sample();DR[x.sid]=x}
+ if(!Object.keys(DR).length){var x=mk("วิชาใหม่","",blank());x.tmp=true;DR[x.sid]=x}
  js("fa_drafts",DR);EX=DR[jl("fa_cur",null)]||DR[Object.keys(DR)[0]];if(!EX.cfg)EX.cfg=clone(DEF)})();
+function mergeDrafts(dd){var o={cur:false,conf:[]};
+ Object.keys(dd).forEach(function(k){var r=dd[k];if(!r||!r.items)return;var l=DR[k];
+  if(!l){var n0=fixd(r,k);n0.base=ck(n0);DR[k]=n0;return}
+  if(ck(r)===ck(l))return;
+  if(l.base!==undefined&&ck(l)!==l.base){o.conf.push(k);return}
+  var n=fixd(r,k);n.base=ck(n);DR[k]=n;if(EX.sid===k){EX=n;o.cur=true}});
+ return o}
+function pristine(x){return x.tmp&&x.items.length===1&&!x.items[0].q&&x.title==="วิชาใหม่"&&!x.sub}
 function getEx(r){return ARC[r.eid]||null}
 function sidOf(r){return r.sid||(ARC[r.eid]&&ARC[r.eid].sid)||""}
 function subjTitle(k){if(SUBJ[k])return SUBJ[k].title;if(DR[k])return DR[k].title;for(var e in ARC)if(ARC[e].sid===k)return ARC[e].title;return k||"(ไม่ระบุวิชา)"}
@@ -230,7 +238,7 @@ function tot(r){var e=getEx(r);return e?r.a.filter(function(x){return x!==-2}).l
 function fmt(t){var d=new Date(t);return isNaN(d)?"":d.toLocaleString("th-TH",{dateStyle:"short",timeStyle:"short"})}
 function say(t){$("msg").textContent=t}
 function tab(n){$("pe").style.display=n==1?"block":"none";$("pr").style.display=n==2?"block":"none";$("t1").className=n==1?"":"sec";$("t2").className=n==2?"":"sec"}
-$("t1").onclick=function(){tab(1)};$("t2").onclick=function(){tab(2);refresh()};
+$("t1").onclick=function(){tab(1);refresh()};$("t2").onclick=function(){tab(2);refresh()};
 $("in").onclick=function(){if($("pw").value===ADMIN_PASS){$("login").style.display="none";$("app").style.display="block";ed();tab(1);refresh()}else $("lerr").textContent="รหัสผ่านไม่ถูกต้อง"};
 $("pw").onkeydown=function(e){if(e.key==="Enter")$("in").click()};
 $("out").onclick=function(){$("app").style.display="none";$("login").style.display="block";$("pw").value="";$("lerr").textContent=""};
@@ -238,11 +246,12 @@ $("out").onclick=function(){$("app").style.display="none";$("login").style.displ
 /* ---------- ฐานข้อมูล: ผลสอบ ---------- */
 function refresh(){say("กำลังโหลด...");
  return Promise.all([api("GET","/results"),api("GET","/archive"),api("GET","/subjects"),api("GET","/drafts")]).then(function(v){
-  RES=v[0]?Object.keys(v[0]).map(function(k){var r=v[0][k];r.id=r.id||k;r.a=r.a||[];return r}):[];ARC=v[1]||{};SUBJ=v[2]||{};var dd=v[3]||{};Object.keys(dd).forEach(function(k){if(!DR[k]&&dd[k]&&dd[k].items)DR[k]=fixd(dd[k],k)});js("fa_drafts",DR);
+  RES=v[0]?Object.keys(v[0]).map(function(k){var r=v[0][k];r.id=r.id||k;r.a=r.a||[];return r}):[];ARC=v[1]||{};SUBJ=v[2]||{};var cx=mergeDrafts(v[3]||{});if(pristine(EX)){var ks=Object.keys(DR).filter(function(k){return k!==EX.sid});if(ks.length){delete DR[EX.sid];EX=DR[ks[0]];js("fa_cur",EX.sid);ed()}}js("fa_drafts",DR);
+  if(cx.cur){js("fa_cur",EX.sid);ed()}if(cx.conf.indexOf(EX.sid)>-1)$("xm").textContent="⚠ วิชานี้ถูกแก้จากเครื่องอื่น ข้อมูลในฐานข้อมูลไม่ตรงกับที่แก้ค้างในเครื่องนี้ ถ้ากดบันทึกจะทับข้อมูลในฐานข้อมูล";
   fillFs();fillSj();chk();render();say("อัปเดตล่าสุด "+new Date().toLocaleTimeString("th-TH")+" · "+RES.length+" รายการ")
  }).catch(function(e){say("เชื่อมต่อฐานข้อมูลไม่สำเร็จ ("+e.message+") ตรวจสอบอินเทอร์เน็ตและ Rules ของ Firebase")})}
 $("rf").onclick=refresh;
-setInterval(function(){if($("app").style.display==="block"&&$("pr").style.display==="block"&&!document.querySelector(".dr"))refresh()},60000);
+setInterval(function(){if($("app").style.display==="block"&&!document.querySelector(".dr"))refresh()},60000);
 function fillFs(){var v=$("fs").value,ids={};RES.forEach(function(r){var k=sidOf(r);if(k)ids[k]=1});Object.keys(SUBJ).forEach(function(k){ids[k]=1});
  var h='<option value="">ทุกวิชา</option>';Object.keys(ids).forEach(function(k){h+='<option value="'+esc(k)+'"'+(k===v?" selected":"")+">"+esc(subjTitle(k))+"</option>"});$("fs").innerHTML=h}
 $("fs").onchange=render;
@@ -287,12 +296,12 @@ $("tb").onclick=function(e){var v=e.target.getAttribute("data-v"),x=e.target.get
 
 /* ---------- วิชา และตัวสร้างข้อสอบ ---------- */
 function fillSj(){var ids={};Object.keys(DR).forEach(function(k){ids[k]=1});Object.keys(SUBJ).forEach(function(k){ids[k]=1});
- var h="";Object.keys(ids).forEach(function(k){h+='<option value="'+esc(k)+'"'+(k===EX.sid?" selected":"")+">"+esc(DR[k]?DR[k].title||"(ยังไม่ตั้งชื่อ)":subjTitle(k))+(SUBJ[k]?" · เผยแพร่แล้ว":" · ฉบับร่าง")+"</option>"});$("sj").innerHTML=h}
+ var h="";Object.keys(ids).forEach(function(k){h+='<option value="'+esc(k)+'"'+(k===EX.sid?" selected":"")+">"+esc(DR[k]?DR[k].title||"(ยังไม่ตั้งชื่อ)":subjTitle(k))+" #"+k.slice(-4)+(SUBJ[k]?" · เผยแพร่แล้ว":" · ฉบับร่าง (ยังไม่เผยแพร่)")+"</option>"});$("sj").innerHTML=h}
 function fixd(f,k){f.sid=k;f.items.forEach(function(it){it.e=it.e||""});f.cfg=f.cfg||clone(DEF);return f}
 $("sj").onchange=function(){var k=this.value;if(DR[k]){EX=DR[k];sv();ed();return}
  var s=SUBJ[k];if(!s)return;$("xm").textContent="กำลังดึงข้อสอบ...";
- api("GET","/archive/"+s.id).then(function(f){if(!f||!f.items)throw new Error("ไม่พบข้อมูล");EX=DR[k]=fixd(f,k);sv();ed();$("xm").textContent=""}).catch(function(e){$("xm").textContent="ดึงไม่สำเร็จ ("+e.message+")";fillSj()})};
-function putDraft(){var d=clone(EX);d.upd=Date.now();return api("PUT","/drafts/"+EX.sid,d)}
+ api("GET","/archive/"+s.id).then(function(f){if(!f||!f.items)throw new Error("ไม่พบข้อมูล");EX=DR[k]=fixd(f,k);EX.base=ck(EX);sv();ed();$("xm").textContent=""}).catch(function(e){$("xm").textContent="ดึงไม่สำเร็จ ("+e.message+")";fillSj()})};
+function putDraft(){var d=clone(EX);delete d.base;d.upd=Date.now();return api("PUT","/drafts/"+EX.sid,d)}
 $("ns").onclick=function(){var n=prompt("ชื่อวิชา/ข้อสอบใหม่");if(!n||!n.trim())return;EX=mk(n.trim(),"",blank());sv();ed();$("xm").textContent="สร้างวิชาใหม่แล้ว เพิ่มโจทย์แล้วกด “เผยแพร่ข้อสอบ”"};
 $("ds").onclick=function(){if(!confirm("ลบวิชา “"+EX.title+"” ออกจากรายการ? (ผลสอบที่ส่งมาแล้วยังอยู่ในฐานข้อมูล)"))return;
  var k=EX.sid,p=Promise.all([SUBJ[k]?api("DELETE","/subjects/"+k):0,api("DELETE","/drafts/"+k)]);
@@ -326,19 +335,17 @@ function check(){if(!EX.title.trim())return"กรุณาตั้งชื่
  for(var i=0;i<EX.items.length;i++){var it=EX.items[i],n="ข้อ "+(i+1)+": ";if(!it.q.trim())return n+"ยังไม่ได้ใส่โจทย์";
   for(var k=0;k<it.o.length;k++)if(!it.o[k].trim())return n+"ตัวเลือก "+LET.charAt(k)+" ยังว่าง (ลบตัวเลือกที่ไม่ใช้)";
   if(it.a<0||it.a>=it.o.length)return n+"ยังไม่ได้เลือกคำตอบที่ถูก"}return""}
-$("pb").onclick=function(){var bad=check();if(bad){alert(bad);return}
- var full=clone(EX),old=EX.id&&ARC[EX.id];full.id=(old&&gk(old)===gk(EX))?EX.id:Date.now().toString(36);
+function doSave(pubNow){var bad=check();if(bad){alert(bad);return}
+ var live=pubNow||!!SUBJ[EX.sid],full=clone(EX),old=EX.id&&ARC[EX.id];delete full.base;
+ full.id=(old&&gk(old)===gk(EX))?EX.id:Date.now().toString(36);
  var pub={id:full.id,sid:full.sid,title:full.title,sub:full.sub,cfg:full.cfg,items:full.items.map(function(i){return{q:i.q,o:i.o}})};
  $("xm").textContent="กำลังบันทึกลงฐานข้อมูล...";
- api("PUT","/archive/"+full.id,full).then(function(){return api("PUT","/subjects/"+full.sid,pub)}).then(function(){
-  EX.id=full.id;ARC[full.id]=full;SUBJ[full.sid]=pub;sv();putDraft().catch(function(){});fillSj();
-  $("xm").textContent="บันทึกลงฐานข้อมูลแล้ว ("+full.items.length+" ข้อ) "+new Date().toLocaleTimeString("th-TH")+" · ผู้สอบเห็นทันที"
- }).catch(function(e){$("xm").textContent="บันทึกไม่สำเร็จ ("+e.message+") ตรวจสอบอินเทอร์เน็ตและ Rules ของ Firebase"})};
-$("pl").onclick=function(){var k=EX.sid;$("xm").textContent="กำลังดึงข้อมูล...";
- api("GET","/subjects/"+k).then(function(c){if(!c||!c.id)throw new Error("วิชานี้ยังไม่เคยเผยแพร่");return api("GET","/archive/"+c.id)}).then(function(f){
-  if(!f||!f.items)throw new Error("ไม่พบข้อมูลข้อสอบ");if(!confirm("แทนที่ฉบับร่างของวิชานี้ด้วยข้อสอบที่เผยแพร่ล่าสุด?")){$("xm").textContent="";return}
-  EX=DR[k]=fixd(f,k);sv();ed();$("xm").textContent="ดึงข้อสอบแล้ว"
- }).catch(function(e){$("xm").textContent="ดึงไม่สำเร็จ ("+e.message+")"})};
+ var p=api("PUT","/archive/"+full.id,full);if(live)p=p.then(function(){return api("PUT","/subjects/"+full.sid,pub)});
+ p.then(function(){EX.id=full.id;delete EX.tmp;EX.base=ck(EX);ARC[full.id]=full;if(live)SUBJ[full.sid]=pub;sv();putDraft().catch(function(){});fillSj();
+  $("xm").textContent=(live?"บันทึกและเผยแพร่แล้ว · ผู้สอบเห็นทันที":"บันทึกลงฐานข้อมูลแล้ว · ยังไม่เผยแพร่ ผู้สอบยังไม่เห็น")+" ("+full.items.length+" ข้อ) "+new Date().toLocaleTimeString("th-TH")
+ }).catch(function(e){$("xm").textContent="บันทึกไม่สำเร็จ ("+e.message+") ตรวจสอบอินเทอร์เน็ตและ Rules ของ Firebase"})}
+$("pb").onclick=function(){doSave(false)};
+$("pl").onclick=function(){doSave(true)};
 $("sd").onclick=function(){EX=sample();sv();ed();$("xm").textContent="เพิ่มวิชาตัวอย่างแล้ว (ปฐมพยาบาล 20 ข้อ)"};
 
 /* ---------- หน้าผู้สอบ (เลือกวิชา โหลดข้อสอบ และส่งผลผ่านฐานข้อมูล) ---------- */
@@ -378,7 +385,7 @@ button{font:600 17px "Sarabun",sans-serif;padding:10px 22px;border:0;background:
 button:disabled{opacity:.6;cursor:wait}
 button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .dq{padding:10px 0;border-top:1px dashed var(--line)}.ok{color:var(--g);font-weight:600}.bad{color:var(--red);font-weight:600}#rv h2{font-size:22px;margin:18px 0 4px}
-.sj{display:block;width:100%;text-align:left;margin:10px 0;padding:14px 16px;font-size:18px}.sj small{font-weight:400;opacity:.9}
+.sj{display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;margin:12px 0;padding:16px 18px;font-size:18px;background:var(--card);color:var(--ink);border:1px solid var(--line);border-left:6px solid var(--red);border-radius:12px}.sj:hover{border-color:var(--red)}.sj small{display:block;font-weight:400;color:var(--mute);font-size:14px}.sj::after{content:"›";font-size:30px;line-height:1;color:var(--red);margin-left:12px}
 #done{display:none;background:var(--card);border:2px solid var(--red);border-radius:6px;padding:18px;margin:20px 0}
 #done h2{margin:0 0 6px}#err{color:var(--red);font-weight:600}#ld{margin:24px 0;color:var(--mute)}
 </style></head><body>
@@ -413,7 +420,7 @@ api("GET","/subjects").then(function(o){
 }).catch(function(e){var m=String(e&&e.message||e);ld("โหลดข้อสอบไม่สำเร็จ ("+m+") "+(/40[13]/.test(m)?"ฐานข้อมูลไม่อนุญาตให้อ่านข้อมูล ผู้ดูแลต้องตั้ง Rules ของ Firebase ให้อ่านได้":/404/.test(m)?"ไม่พบฐานข้อมูล ตรวจสอบลิงก์ Firebase":"ตรวจสอบอินเทอร์เน็ต หรือเปิดหน้านี้ด้วยเบราว์เซอร์หลัก (Chrome/Safari) แล้วรีเฟรช"))});
 function menu(o,ks){
  var h='<h2 style="font-size:20px;margin:24px 0 4px">เลือกวิชาที่ต้องการสอบ</h2>';
- ks.forEach(function(k){h+='<button class="sj" data-k="'+esc(k)+'">'+esc(o[k].title)+'<br><small>'+esc(o[k].sub||"")+(o[k].sub?" · ":"")+(CFN(o[k]))+' ข้อ</small></button>'});
+ ks.forEach(function(k){h+='<button class="sj" data-k="'+esc(k)+'"><span>'+esc(o[k].title)+'<small>'+esc(o[k].sub||"")+(o[k].sub?" · ":"")+(CFN(o[k]))+' ข้อ</small></span></button>'});
  var p=document.getElementById("pick");p.innerHTML=h;p.style.display="block";document.getElementById("ld").style.display="none";
  p.onclick=function(e){var b=e.target.closest(".sj");if(!b)return;p.style.display="none";init(o[b.getAttribute("data-k")])};
 }
