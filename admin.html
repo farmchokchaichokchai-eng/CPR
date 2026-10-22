@@ -139,7 +139,7 @@ td button{padding:4px 12px;font-size:14px;border-radius:8px}
 <div class="card">
 <label class="fl" for="et">ชื่อวิชา / ชื่อข้อสอบ</label><input type="text" id="et">
 <label class="fl" for="es">คำอธิบายใต้ชื่อ (ไม่บังคับ)</label><input type="text" id="es">
-<p class="note" style="margin:12px 0 0">พิมพ์โจทย์และตัวเลือก ติ๊กวงกลมหน้าตัวเลือกที่เป็นคำตอบที่ถูก เมื่อเสร็จกด “เผยแพร่ข้อสอบ” ฉบับร่างบันทึกในเบราว์เซอร์นี้อัตโนมัติ ไฟล์ exam.html ใช้ซ้ำได้ทุกวิชา</p>
+<p class="note" style="margin:12px 0 0">พิมพ์โจทย์และตัวเลือก ติ๊กวงกลมหน้าตัวเลือกที่เป็นคำตอบที่ถูก เมื่อเสร็จกด “เผยแพร่ข้อสอบ” ฉบับร่างบันทึกในเบราว์เซอร์นี้อัตโนมัติ และกด “บันทึกฉบับร่าง” เพื่อเก็บลงฐานข้อมูล (ผู้สอบยังไม่เห็น) เปิดแก้จากเครื่องอื่นได้ ไฟล์ exam.html ใช้ซ้ำได้ทุกวิชา</p>
 <h2 style="font-size:16px;margin-top:22px">ตัวเลือกการสอบ</h2>
 <div class="sws">
 <label class="sw"><input type="checkbox" id="c1"><span><b>สุ่มลำดับข้อ</b><small>ผู้สอบแต่ละคนได้ลำดับข้อไม่เหมือนกัน</small></span></label>
@@ -151,7 +151,7 @@ td button{padding:4px 12px;font-size:14px;border-radius:8px}
 </div>
 <div id="el"></div>
 <button class="sec addq" id="aq">+ เพิ่มข้อสอบ</button>
-<div class="bar"><button id="pb">▲ เผยแพร่ข้อสอบ</button><button class="sec" id="pl">ดึงข้อสอบที่เผยแพร่</button><button class="sec" id="xp">ดาวน์โหลด exam.html</button><button class="sec" id="sj2">บันทึก .json</button><label class="btn sec">เปิด .json<input type="file" id="oj" accept=".json,application/json" style="display:none"></label><button class="sec" id="sd">เพิ่มวิชาตัวอย่าง</button><span id="xm" role="status"></span></div>
+<div class="bar"><button id="svd">💾 บันทึกฉบับร่าง</button><button id="pb">▲ เผยแพร่ข้อสอบ</button><button class="sec" id="pl">ดึงข้อสอบที่เผยแพร่</button><button class="sec" id="sd">เพิ่มวิชาตัวอย่าง</button><span id="xm" role="status"></span></div>
 </div>
 
 <div id="pr" style="display:none">
@@ -231,8 +231,8 @@ $("out").onclick=function(){$("app").style.display="none";$("login").style.displ
 
 /* ---------- ฐานข้อมูล: ผลสอบ ---------- */
 function refresh(){say("กำลังโหลด...");
- return Promise.all([api("GET","/results"),api("GET","/archive"),api("GET","/subjects")]).then(function(v){
-  RES=v[0]?Object.keys(v[0]).map(function(k){var r=v[0][k];r.id=r.id||k;r.a=r.a||[];return r}):[];ARC=v[1]||{};SUBJ=v[2]||{};
+ return Promise.all([api("GET","/results"),api("GET","/archive"),api("GET","/subjects"),api("GET","/drafts")]).then(function(v){
+  RES=v[0]?Object.keys(v[0]).map(function(k){var r=v[0][k];r.id=r.id||k;r.a=r.a||[];return r}):[];ARC=v[1]||{};SUBJ=v[2]||{};var dd=v[3]||{};Object.keys(dd).forEach(function(k){if(!DR[k]&&dd[k]&&dd[k].items)DR[k]=fixd(dd[k],k)});js("fa_drafts",DR);
   fillFs();fillSj();render();say("อัปเดตล่าสุด "+new Date().toLocaleTimeString("th-TH")+" · "+RES.length+" รายการ")
  }).catch(function(e){say("เชื่อมต่อฐานข้อมูลไม่สำเร็จ ("+e.message+") ตรวจสอบอินเทอร์เน็ตและ Rules ของ Firebase")})}
 $("rf").onclick=refresh;
@@ -286,9 +286,11 @@ function fixd(f,k){f.sid=k;f.items.forEach(function(it){it.e=it.e||""});f.cfg=f.
 $("sj").onchange=function(){var k=this.value;if(DR[k]){EX=DR[k];sv();ed();return}
  var s=SUBJ[k];if(!s)return;$("xm").textContent="กำลังดึงข้อสอบ...";
  api("GET","/archive/"+s.id).then(function(f){if(!f||!f.items)throw new Error("ไม่พบข้อมูล");EX=DR[k]=fixd(f,k);sv();ed();$("xm").textContent=""}).catch(function(e){$("xm").textContent="ดึงไม่สำเร็จ ("+e.message+")";fillSj()})};
+function putDraft(){var d=clone(EX);d.upd=Date.now();return api("PUT","/drafts/"+EX.sid,d)}
+$("svd").onclick=function(){sv();$("xm").textContent="กำลังบันทึก...";putDraft().then(function(){$("xm").textContent="บันทึกฉบับร่างแล้ว "+new Date().toLocaleTimeString("th-TH")}).catch(function(e){$("xm").textContent="บันทึกลงฐานข้อมูลไม่สำเร็จ ("+e.message+") ฉบับร่างยังอยู่ในเบราว์เซอร์นี้"})};
 $("ns").onclick=function(){var n=prompt("ชื่อวิชา/ข้อสอบใหม่");if(!n||!n.trim())return;EX=mk(n.trim(),"",blank());sv();ed();$("xm").textContent="สร้างวิชาใหม่แล้ว เพิ่มโจทย์แล้วกด “เผยแพร่ข้อสอบ”"};
 $("ds").onclick=function(){if(!confirm("ลบวิชา “"+EX.title+"” ออกจากรายการ? (ผลสอบที่ส่งมาแล้วยังอยู่ในฐานข้อมูล)"))return;
- var k=EX.sid,p=SUBJ[k]?api("DELETE","/subjects/"+k):Promise.resolve();
+ var k=EX.sid,p=Promise.all([SUBJ[k]?api("DELETE","/subjects/"+k):0,api("DELETE","/drafts/"+k)]);
  p.then(function(){delete DR[k];delete SUBJ[k];var ks=Object.keys(DR);if(!ks.length){var x=mk("วิชาใหม่","",blank());DR[x.sid]=x;ks=[x.sid]}EX=DR[ks[0]];sv();ed();$("xm").textContent="ลบวิชาแล้ว"}).catch(function(e){$("xm").textContent="ลบไม่สำเร็จ ("+e.message+")"})};
 function ed(){
  $("et").value=EX.title;$("es").value=EX.sub;$("c4").checked=EX.cfg.rk!==false;$("c1").checked=!!EX.cfg.sq;$("c2").checked=!!EX.cfg.so;$("c3").value=EX.cfg.n||"";$("lk").textContent="#"+EX.sid;fillSj();
@@ -325,20 +327,13 @@ $("pb").onclick=function(){var bad=check();if(bad){alert(bad);return}
  var pub={id:full.id,sid:full.sid,title:full.title,sub:full.sub,cfg:full.cfg,items:full.items.map(function(i){return{q:i.q,o:i.o}})};
  $("xm").textContent="กำลังเผยแพร่...";
  api("PUT","/archive/"+full.id,full).then(function(){return api("PUT","/subjects/"+full.sid,pub)}).then(function(){
-  EX.id=full.id;sv();ARC[full.id]=full;SUBJ[full.sid]=pub;fillSj();$("xm").textContent="เผยแพร่วิชา “"+full.title+"” แล้ว ("+full.items.length+" ข้อ) ผู้สอบที่เปิดหน้า exam.html จะเห็นวิชานี้ทันที"
+  EX.id=full.id;sv();putDraft().catch(function(){});ARC[full.id]=full;SUBJ[full.sid]=pub;fillSj();$("xm").textContent="เผยแพร่วิชา “"+full.title+"” แล้ว ("+full.items.length+" ข้อ) ผู้สอบที่เปิดหน้า exam.html จะเห็นวิชานี้ทันที"
  }).catch(function(e){$("xm").textContent="เผยแพร่ไม่สำเร็จ ("+e.message+") ตรวจสอบอินเทอร์เน็ตและ Rules ของ Firebase"})};
 $("pl").onclick=function(){var k=EX.sid;$("xm").textContent="กำลังดึงข้อมูล...";
  api("GET","/subjects/"+k).then(function(c){if(!c||!c.id)throw new Error("วิชานี้ยังไม่เคยเผยแพร่");return api("GET","/archive/"+c.id)}).then(function(f){
   if(!f||!f.items)throw new Error("ไม่พบข้อมูลข้อสอบ");if(!confirm("แทนที่ฉบับร่างของวิชานี้ด้วยข้อสอบที่เผยแพร่ล่าสุด?")){$("xm").textContent="";return}
   EX=DR[k]=fixd(f,k);sv();ed();$("xm").textContent="ดึงข้อสอบแล้ว"
  }).catch(function(e){$("xm").textContent="ดึงไม่สำเร็จ ("+e.message+")"})};
-$("xp").onclick=function(){dl("exam.html",TPL.replace("__DB__",function(){return DB}),"text/html;charset=utf-8")};
-$("sj2").onclick=function(){dl("exam-set.json",JSON.stringify(EX,null,1),"application/json")};
-$("oj").onchange=function(e){var f=e.target.files[0];if(!f)return;var rd=new FileReader();
- rd.onload=function(){try{var j=JSON.parse(rd.result);if(!j||!Array.isArray(j.items))throw 0;
-  j.items.forEach(function(it){if(typeof it.q!=="string"||!Array.isArray(it.o)||typeof it.a!=="number")throw 0;it.e=it.e||""});
-  if(!confirm("แทนที่ข้อสอบของวิชาที่กำลังแก้อยู่ด้วยไฟล์นี้?"))return;
-  EX=DR[EX.sid]={sid:EX.sid,id:"",title:j.title||EX.title,sub:j.sub||"",items:j.items,cfg:j.cfg||clone(DEF)};sv();ed()}catch(x){alert("ไฟล์ชุดข้อสอบไม่ถูกต้อง")}e.target.value=""};rd.readAsText(f)};
 $("sd").onclick=function(){EX=sample();sv();ed();$("xm").textContent="เพิ่มวิชาตัวอย่างแล้ว (ปฐมพยาบาล 20 ข้อ)"};
 
 /* ---------- หน้าผู้สอบ (เลือกวิชา โหลดข้อสอบ และส่งผลผ่านฐานข้อมูล) ---------- */
